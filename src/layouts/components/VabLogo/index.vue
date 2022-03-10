@@ -8,7 +8,7 @@
         :class="{ 'hidden-xs-only': layout === 'horizontal' }"
         :title="title"
       >
-        {{ title }}
+        豫璟科技
       </span>
     </router-link>
   </div>

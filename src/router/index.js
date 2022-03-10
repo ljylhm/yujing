@@ -59,6 +59,23 @@ export const asyncRoutes = [
     redirect: 'noRedirect',
     children: [
       {
+        path: 'classroom',
+        name: 'ClassRoom',
+        component: () => import('@/views/classroom/index'),
+        meta: {
+          title: '教室管理',
+          icon: 'home',
+          affix: true,
+        },
+      },
+    ],
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: 'noRedirect',
+    children: [
+      {
         path: 'user',
         name: 'User',
         component: () => import('@/views/user/index'),
@@ -70,23 +87,23 @@ export const asyncRoutes = [
       },
     ],
   },
-  {
-    path: "/test",
-    component: Layout,
-    redirect: "noRedirect",
-    children: [
-      {
-        path: "test",
-        name: "Test",
-        component: () => import("@/views/test/index"),
-        meta: {
-          title: "test",
-          icon: "marker",
-          permissions: ["admin"],
-        },
-      },
-    ],
-  },
+  // {
+  //   path: "/test",
+  //   component: Layout,
+  //   redirect: "noRedirect",
+  //   children: [
+  //     {
+  //       path: "test",
+  //       name: "Test",
+  //       component: () => import("@/views/test/index"),
+  //       meta: {
+  //         title: "test",
+  //         icon: "marker",
+  //         permissions: ["admin"],
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: '/vab',
     component: Layout,
