@@ -64,7 +64,7 @@
             // const { msg } = await doEdit(this.form)
             console.log("当前表单的数据", this.form)
             const result = await request({
-              url: "/classroom/add",
+              url: "https://mastercenter.cn/classroom/add",
               method: "post",
               data: {
                 ...this.form

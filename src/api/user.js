@@ -9,11 +9,7 @@ export async function login(data) {
   return request({
     url: 'https://mastercenter.cn/auth/login',
     method: 'post',
-    data:{
-      phone: '13986670515',
-      password: 'yujingjiaoyu',
-      type: 4
-    }
+    data
   })
 }
 

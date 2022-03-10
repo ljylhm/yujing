@@ -1,11 +1,11 @@
 <template>
   <div class="login-container">
-    <el-alert
+    <!-- <el-alert
       title="beautiful boys and girls欢迎加入vue-admin-beautifulQQ群：972435319"
       type="success"
       :closable="false"
       style="position: fixed"
-    ></el-alert>
+    ></el-alert> -->
     <el-row>
       <el-col :xs="24" :sm="24" :md="12" :lg="16" :xl="16">
         <div style="color: transparent">占位符</div>
@@ -20,12 +20,12 @@
         >
           <div class="title">hello !</div>
           <div class="title-tips">欢迎来到{{ title }}！</div>
-          <el-form-item style="margin-top: 40px" prop="username">
+          <el-form-item style="margin-top: 40px" prop="phone">
             <span class="svg-container svg-container-admin">
               <vab-icon :icon="['fas', 'user']" />
             </span>
             <el-input
-              v-model.trim="form.username"
+              v-model.trim="form.phone"
               v-focus
               placeholder="请输入用户名"
               tabindex="1"
@@ -104,11 +104,12 @@
         nodeEnv: process.env.NODE_ENV,
         title: this.$baseTitle,
         form: {
-          username: '',
+          phone: '',
           password: '',
+          type: 4,
         },
         rules: {
-          username: [
+          phone: [
             {
               required: true,
               trigger: 'blur',

@@ -46,7 +46,7 @@ const actions = {
   },
   async login({ commit }, userInfo) {
     const { data } = await login(userInfo)
-    const accessToken = data["token"]
+    const accessToken = data['token']
     if (accessToken) {
       commit('setAccessToken', accessToken)
       const hour = new Date().getHours()
@@ -86,7 +86,7 @@ const actions = {
     }
   },
   async logout({ dispatch }) {
-    await logout(state.accessToken)
+    // await logout(state.accessToken)
     await dispatch('resetAccessToken')
     await resetRouter()
   },
