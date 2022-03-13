@@ -13,13 +13,10 @@ export async function login(data) {
   })
 }
 
-export function getUserInfo(accessToken) {
+export function getUserInfo() {
   return request({
-    url: '/userInfo',
-    method: 'post',
-    data: {
-      [tokenName]: accessToken,
-    },
+    url: 'https://mastercenter.cn/user/current',
+    method: 'post'
   })
 }
 

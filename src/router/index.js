@@ -87,6 +87,40 @@ export const asyncRoutes = [
       },
     ],
   },
+  {
+    path: '/',
+    component: Layout,
+    redirect: 'noRedirect',
+    children: [
+      {
+        path: 'subject',
+        name: 'Subject',
+        component: () => import('@/views/subject/index'),
+        meta: {
+          title: '学科管理',
+          icon: 'balance-scale',
+          affix: true,
+        },
+      },
+    ],
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: 'noRedirect',
+    children: [
+      {
+        path: 'course',
+        name: 'Cubject',
+        component: () => import('@/views/course/index'),
+        meta: {
+          title: '课时管理',
+          icon: 'atlas',
+          affix: true,
+        },
+      },
+    ],
+  },
   // {
   //   path: "/test",
   //   component: Layout,

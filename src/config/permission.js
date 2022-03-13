@@ -44,6 +44,7 @@ router.beforeResolve(async (to, from, next) => {
             //settings.js loginInterception为false时，创建虚拟权限
             await store.dispatch('user/setPermissions', ['admin'])
             permissions = ['admin']
+            store.dispatch('user/getUserInfo')
           } else {
             permissions = await store.dispatch('user/getUserInfo')
           }

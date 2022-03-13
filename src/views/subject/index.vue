@@ -1,39 +1,35 @@
 <template>
-  <div class="userManagement-container">
+  <div class="table-container">
     <vab-query-form>
-      <vab-query-form-left-panel :span="4">
-        <el-button icon="el-icon-plus" type="primary" @click="handleEdit">
+      <vab-query-form-left-panel>
+        <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
           添加
         </el-button>
         <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
-          批量删除
+          删除
         </el-button> -->
+        <!-- <el-button type="primary" @click="testMessage">baseMessage</el-button>
+        <el-button type="primary" @click="testALert">baseAlert</el-button>
+        <el-button type="primary" @click="testConfirm">baseConfirm</el-button>
+        <el-button type="primary" @click="testNotify">baseNotify</el-button> -->
       </vab-query-form-left-panel>
-      <vab-query-form-right-panel :span="20">
-        <el-form :inline="true" :model="queryForm" @submit.native.prevent>
-          <el-form-item label="用户名：">
-            <el-input
-              v-model.trim="queryForm.name"
-              placeholder="请输入用户名"
-              clearable
-            />
-          </el-form-item>
-          <el-form-item label="用户类型：">
-            <el-select v-model="queryForm.type" placeholder="请选择用户类型">
-              <el-option
-                :label="'全部'"
-                :value="''">
-              </el-option>
-              <el-option
-                v-for="(value, key) in statusList"
-                :key="key"
-                :label="value"
-                :value="key">
-              </el-option>
-            </el-select>
+      <vab-query-form-right-panel>
+        <el-form
+          ref="form"
+          :model="queryForm"
+          :inline="true"
+          @submit.native.prevent
+        >
+          <el-form-item>
+            <el-input v-model="queryForm.name" placeholder="请输入学科查询" />
           </el-form-item>
           <el-form-item>
-            <el-button icon="el-icon-search" type="primary" @click="queryData">
+            <el-button
+              icon="el-icon-search"
+              type="primary"
+              native-type="submit"
+              @click="handleQuery"
+            >
               查询
             </el-button>
           </el-form-item>
@@ -42,48 +38,39 @@
     </vab-query-form>
 
     <el-table
+      ref="tableSort"
       v-loading="listLoading"
       :data="list"
-      :height="height"
       :element-loading-text="elementLoadingText"
+      :height="height"
+      @selection-change="setSelectRows"
+      @sort-change="tableSortChange"
     >
-      <el-table-column show-overflow-tooltip label="序号" align="center">
+     
+      <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column
         show-overflow-tooltip
+        label="学科名"
         prop="name"
-        label="用户名"
         align="center"
       ></el-table-column>
       <el-table-column
         show-overflow-tooltip
-        prop="phone"
-        label="电话号码"
+        label="学科描述"
+        prop="description"
         align="center"
       ></el-table-column>
-       <el-table-column
+      <el-table-column
         show-overflow-tooltip
-        prop="birthday"
-        label="生日"
-        align="center"
-      >
-        <template #default="{ row }">
-          {{ format(row.birthday) || "--"}}
-        </template>
-      </el-table-column>
-
-      <el-table-column show-overflow-tooltip label="角色"  align="center">
-        <template #default="{ row }">
-          <el-tag :type="tagList[row.type]">
-            {{ statusList[row.type] }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column show-overflow-tooltip label="操作" width="200">
+        label="创建时间"
+        prop="created_at"
+        width="200"
+      ></el-table-column>
+      <el-table-column show-overflow-tooltip label="操作" width="180px">
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>
@@ -91,77 +78,81 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      background
+      :background="background"
       :current-page="queryForm.page"
-      :page-size="queryForm.limit"
       :layout="layout"
+      :page-size="queryForm.limit"
       :total="total"
-      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
     ></el-pagination>
-    <edit ref="edit" v-on:fetchData='fetchData'></edit>
+    <table-edit ref="edit" v-on:fetchData='fetchData'></table-edit>
   </div>
 </template>
 
 <script>
-  import { getList, doDelete } from '@/api/userManagement'
-  import Edit from './components/UserManagementEdit'
+  import { getList, doDelete } from '@/api/table'
+  import TableEdit from './components/TableEdit'
   import request from '@/utils/request'
-  import { timeFormat } from '@/utils/date'
-
   export default {
-    name: 'UserManagement',
-    components: { Edit },
+    name: 'ComprehensiveTable',
+    components: {
+      TableEdit,
+    },
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          published: 'success',
+          draft: 'gray',
+          deleted: 'danger',
+        }
+        return statusMap[status]
+      },
+    },
     data() {
       return {
-        list: null,
+        imgShow: true,
+        list: [],
+        imageList: [],
         listLoading: true,
         layout: 'total, sizes, prev, pager, next, jumper',
         total: 0,
+        background: true,
         selectRows: '',
         elementLoadingText: '正在加载...',
         queryForm: {
           page: 1,
-          limit: 10,
+          limit: 20,
           name: '',
-          type: ''
         },
-        statusList:{
-          "1": "学生",
-          "2": "家长",
-          "3": "老师",
-          "4": "管理员"
-        },
-        tagList:{
-          "1": "success",
-          "2": "info",
-          "3": "warning",
-          "4": "danger"
-        }
       }
-    },
-    created() {
-      this.fetchData()
     },
     computed: {
       height() {
         return this.$baseTableHeight()
       },
     },
+    async created() {
+      this.fetchData()
+    },
+    beforeDestroy() {},
+    mounted() {},
     methods: {
+      tableSortChange() {
+        const imageList = []
+        this.$refs.tableSort.tableData.forEach((item, index) => {
+          imageList.push(item.img)
+        })
+        this.imageList = imageList
+      },
       setSelectRows(val) {
         this.selectRows = val
       },
-      format(value){
-        console.log("value", value)
-        return timeFormat(value, "yyyy-MM-dd")
+      handleAdd() {
+        this.$refs['edit'].showEdit()
       },
       handleEdit(row) {
-        if (row.id) {
-          this.$refs['edit'].showEdit(row)
-        } else {
-          this.$refs['edit'].showEdit()
-        }
+        this.$refs['edit'].showEdit(row)
       },
       handleDelete(row) {
         if (row.id) {
@@ -174,7 +165,7 @@
           if (this.selectRows.length > 0) {
             const ids = this.selectRows.map((item) => item.id).join()
             this.$baseConfirm('你确定要删除选中项吗', null, async () => {
-              const { msg } = await doDelete({ ids })
+              const { msg } = await doDelete({ ids: ids })
               this.$baseMessage(msg, 'success')
               this.fetchData()
             })
@@ -192,17 +183,15 @@
         this.queryForm.page = val
         this.fetchData()
       },
-      queryData() {
+      handleQuery() {
         this.queryForm.page = 1
         this.fetchData()
       },
       async fetchData() {
         this.listLoading = true
-
-        // 获取列表用户数据
-         try {
+        try {
           const result = await request({
-            url: "https://mastercenter.cn/user/list",
+            url: "https://mastercenter.cn/course/list",
             method: "post",
             data: {
               ...this.queryForm
@@ -216,6 +205,33 @@
           
         }
         this.listLoading = false
+      },
+      testMessage() {
+        this.$baseMessage('test1', 'success')
+      },
+      testALert() {
+        this.$baseAlert('11')
+        this.$baseAlert('11', '自定义标题', () => {
+          /* 可以写回调; */
+        })
+        this.$baseAlert('11', null, () => {
+          /* 可以写回调; */
+        })
+      },
+      testConfirm() {
+        this.$baseConfirm(
+          '你确定要执行该操作?',
+          null,
+          () => {
+            /* 可以写回调; */
+          },
+          () => {
+            /* 可以写回调; */
+          }
+        )
+      },
+      testNotify() {
+        this.$baseNotify('测试消息提示', 'test', 'success', 'bottom-right')
       },
     },
   }
