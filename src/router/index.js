@@ -121,6 +121,23 @@ export const asyncRoutes = [
       },
     ],
   },
+  {
+    path: '/',
+    component: Layout,
+    redirect: 'noRedirect',
+    children: [
+      {
+        path: 'schedule',
+        name: 'Cubject',
+        component: () => import('@/views/schedule/index'),
+        meta: {
+          title: '课程管理',
+          icon: 'align-left',
+          affix: true,
+        },
+      },
+    ],
+  },
   // {
   //   path: "/test",
   //   component: Layout,
