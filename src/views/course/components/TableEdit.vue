@@ -7,7 +7,7 @@
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px">
       <el-form-item label="选择学生" prop="name">
-        <el-select v-model="form.student_id" placeholder="请选择" :disabled="title == '编辑'">
+        <el-select v-model="form.student_id" filterable  placeholder="请选择" :disabled="title == '编辑'">
            <el-option
             v-for="item in studentList"
             :key="item.id"

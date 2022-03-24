@@ -9,7 +9,7 @@
     <footer v-show="footerCopyright" class="footer-copyright">
       Copyright
       <vab-icon :icon="['fas', 'copyright']"></vab-icon>
-      豫璟科技{{ fullYear }}
+      豫璟教育{{ fullYear }}
     </footer>
   </div>
 </template>

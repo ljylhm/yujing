@@ -7,8 +7,8 @@
     @close="close"
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-      <el-form-item label="选择学生" filterable  prop="student_id">
-        <el-select v-model="form.student_id" placeholder="请选择" :disabled="title == '编辑'">
+      <!-- <el-form-item label="选择学生" prop="student_id">
+        <el-select v-model="form.student_id" placeholder="请选择" >
            <el-option
             v-for="item in studentList"
             :key="item.id"
@@ -18,7 +18,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="选择老师" prop="teacher_id">
-        <el-select v-model="form.teacher_id" filterable placeholder="请选择" :disabled="title == '编辑'">
+        <el-select v-model="form.teacher_id" placeholder="请选择">
            <el-option
             v-for="item in teacherList"
             :key="item.id"
@@ -28,7 +28,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="选择科目" prop="course_id">
-        <el-select v-model="form.course_id" placeholder="请选择" :disabled="title == '编辑'">
+        <el-select v-model="form.course_id" placeholder="请选择">
            <el-option
             v-for="item in subjectList"
             :key="item.id"
@@ -38,7 +38,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="选择教室" prop="classroom_id">
-        <el-select v-model="form.classroom_id" placeholder="请选择" :disabled="title == '编辑'">
+        <el-select v-model="form.classroom_id" placeholder="请选择">
            <el-option
             v-for="item in classRoomList"
             :key="item.id"
@@ -46,60 +46,15 @@
             :value="item.id">
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="时间类型" prop="type" >
-        <el-radio-group v-model="form.type">
-          <el-radio :label="1">天</el-radio>
-          <el-radio :label="2">周</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item label="周类型" prop="week_type" v-if="form.type == 2">
-        <el-checkbox-group v-model="form.week_type" size="medium">
-          <el-checkbox v-for="city in weekList" :label="city.name" :key="city.id">{{city.name}}</el-checkbox>
-        </el-checkbox-group>
-
-      </el-form-item>
-      <el-form-item label="首节课开始时间" prop="start_date" >
-        <el-date-picker
-          v-if="form.type == 1"
-          v-model="form.start_date"
-          type="date"
-          align="right"
-          placeholder="开始日期"
-        >
-        </el-date-picker>
-
-         <el-date-picker
-          v-if="form.type == 2"
-          v-model="form.start_date"
-          type="week"
-          format="yyyy 第 WW 周"
-          placeholder="选择周">
-        </el-date-picker>
-
-      </el-form-item>
-      <el-form-item label="首节课时间" prop="start_time">
-         <el-time-picker
-            is-range
-            v-model="form.start_time"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围"
-            format="HH:mm"
-            value-format="HH:mm"
-          >
-         </el-time-picker>
-      </el-form-item>
-      <el-form-item label="课程数量" prop="class_num">
-        <div style="width:100px">
-            <el-input v-model="form.class_num" min=1 type="number" />
-        </div>  
-      </el-form-item>
-      <el-form-item label="课程备注" prop="description" >
+      </el-form-item> -->
+      <el-form-item label="备注" prop="description" >
         <div>
             <el-input v-model="form.description" type="textarea" :rows="2" />
+        </div>
+      </el-form-item>
+      <el-form-item label="实际课时" prop="real_time">
+         <div style="width:100px">
+            <el-input v-model="form.real_time" min=0 type="number" />
         </div>  
       </el-form-item>
     </el-form>
@@ -111,68 +66,34 @@
 
 
    <el-dialog
-    :title="'预览'"
+    :title="'历史记录'"
     :visible.sync="dialogPreviewVisible"
     width="800px"
     custom-class="dialog-preview"
     @close="close"
   >
-    <el-table :data="previewData">
+    <el-table :data="previewData" stripe>
+        <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
+          <template #default="scope">
+            {{ scope.$index + 1 }}
+          </template>
+        </el-table-column>
+        <el-table-column 
+          label="修改记录"
+          prop="event"
+          width="500"
+          align="center"></el-table-column>
         <el-table-column
-          prop="start_time"
-          label="开始日期"
-          width="300"
+          prop="created_at"
+          label="日期"
           align="center">
-            <template slot-scope="scope">
-              {{ format(scope.row.start_time) }}
-           </template>
         </el-table-column>
-        <el-table-column
-          prop="end_time"
-          label="结束日期"
-          width="300"
-          align="center"
-          >
-           <template slot-scope="scope">
-              {{ format(scope.row.end_time) }}
-           </template>
-        </el-table-column>
-        
-         <el-table-column
-            label="操作"
-            align="center"
-          >
-            <template slot-scope="scope">
-              <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
-            </template>
-          </el-table-column>
-    
     </el-table>
-     <div style="text-align: right;padding: 10px 0px">总课时：<span style="color:red;font-weight:600">{{form.predict_time}}</span></div>
+
      <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="saveMain">确 定</el-button>
+      <el-button type="primary" @click="dialogPreviewVisible = false">确 定</el-button>
     </div>
     
-   </el-dialog>
-
-
-    <el-dialog
-    :title="'编辑'"
-    :visible.sync="dialogDescVisible"
-    width="800px"
-    custom-class="dialog-preview"
-    @close="close"
-  >
-    <el-form ref="descForm" :model="descForm" label-width="120px">
-      <el-form-item label="课程备注" prop="description" >
-        <div>
-            <el-input v-model="descForm.description" type="textarea" :rows="2" />
-        </div>  
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="upDateDesc()">确 定</el-button>
-    </div>
    </el-dialog>
 </div>
 
@@ -183,7 +104,7 @@
   import { doEdit } from '@/api/table'
   import request from '@/utils/request'
   import { siteUrl } from '@/config'
-   import { timeFormat } from '@/utils/date'
+  import { timeFormat } from '@/utils/date'
 
   export default {
     name: 'TableEdit',
@@ -193,8 +114,8 @@
           student_id: "",
           course_id: "",
           teacher_id: "",
-          num_class: 1,
-          predict_time: 0,
+          // num_class: 1,
+          predict_time: 1,
           classroom_id: "",
           type: 1,
           name: '',
@@ -202,11 +123,7 @@
           start_date: "",
           start_time: "",
           week_type: [],
-          schedul_time: [],
-          class_num: 1,
-        },
-        descForm:{
-          description: ""
+          schedul_time: []
         },
         rules: {
           student_id: [{ required: true, trigger: 'change', message: '请至少选择一个学生' }],
@@ -224,7 +141,6 @@
         title: '',
         dialogFormVisible: false,
         dialogPreviewVisible: false,
-        dialogDescVisible: false,
         studentList: [],
         teacherList: [],
         subjectList: [],
@@ -280,20 +196,41 @@
         this.getTeacherList()
         this.getSubjectList()
         this.getClassRoomList()
+
+        // 处理一下拿到的时间
+        const start_time = Number(row.start_time) * 1000
+        const end_time = Number(row.end_time) * 1000
+
+        const start_date = timeFormat(start_time, "yyyy-MM-dd")
+        const start_date_hour = [timeFormat(start_time, "hh:mm"),timeFormat(end_time, "hh:mm")]
+    
         if (!row) {
           this.title = '添加'
         } else {
           this.title = '编辑'
-          this.form = Object.assign({}, row)
+          this.form = Object.assign({}, row,{
+            start_date,
+            start_date_hour
+          })
         }
         this.dialogFormVisible = true
       },
-      showDescEdit(row) {
-        this.descForm = Object.assign({}, {
-          description: row.description,
-          id: row.id
-        })
-        this.dialogDescVisible = true
+
+      async showHistory(row){
+        // 查找历史记录
+         const result = await request({
+              url: "https://mastercenter.cn/history/list",
+              method: "post",
+              data: {
+                schedul_id: row.id,
+                page: 1,
+                limit: 100,
+              }
+          })
+          if(result && result.data){
+              this.previewData = result.data.list
+              this.dialogPreviewVisible = true
+          }
       },
       close() {
         this.$refs['form'].resetFields()
@@ -359,7 +296,7 @@
       // 获取科目的信息
       async getClassRoomList(){
          const result = await request({
-              url: "https://mastercenter.cn/classroom/list",
+              url: "https://mastercenter.cn/schedul/list",
               method: "post",
               data: {
                 page: 1,
@@ -374,35 +311,16 @@
       handleDelete(index){
         this.previewData.splice(index, 1)
         this.form.schedulItem.splice(index, 1)
-        this.handleClassNum()
-      },
-
-      getOneClassTimes(){
-          const ONE_HOUR_TIME = 1000 * 60 * 60
-          const wrapStartTime = this.previewData[0].start_time
-          const wrapEndTime = this.previewData[0].end_time
-          const diffClassTimes = Number(((Number(wrapEndTime) - Number(wrapStartTime)) / ONE_HOUR_TIME).toFixed(1))
-          return diffClassTimes
-      },
-
-      handleClassNum(){
-          // 计算课时
-          // 任取一个开始时间和结束时间
-          const oneClassTimes = this.getOneClassTimes() 
-          const diffClassTimes = oneClassTimes * this.form.class_num
-          this.form.predict_time = diffClassTimes
       },
 
       saveMain(){
         this.$nextTick(async ()=>{
 
-            const num = this.getOneClassTimes()
             // 传给后端的时间戳转成unix
             const schedul_time = this.previewData.map(item=>{
               return {
                 start_time: item.start_time / 1000,
-                end_time: item.end_time / 1000,
-                num
+                end_time: item.end_time / 1000
               }
             })
 
@@ -427,88 +345,30 @@
       },
       
       save() {
+        console.log("form", this.form)
         this.$refs['form'].validate(async (valid) => {
+          const { id, description, real_time } = this.form
           if (valid) {
-
-            const schedul_time = []
-
-            // 判断是什么类型
-            const { type, start_date, start_time, class_num } = this.form
-            const [begin, end] = start_time
-
-            const [beginHour, beginMinute] = this.getHourAndMin(begin)
-            const [endHour, endMinute] = this.getHourAndMin(end)
-            const [year, month, day] = this.getYearAndMonthAndDay(start_date)
-
-            const ONE_DAY_TIME = 1000 * 60 * 60 * 24
-            const ONE_WEEK_TIME = ONE_DAY_TIME * 7
-
-            if(type == 1){ // 天
-                const startDayDate = new Date(year, month, day, beginHour, beginMinute).getTime()
-                const enDayDate = new Date(year, month, day, endHour, endMinute).getTime()
-                for(let i = 0; i < Number(class_num); i++){
-                       schedul_time.push([startDayDate + i * ONE_DAY_TIME, enDayDate + i * ONE_DAY_TIME])              
-                }
-            }else { // 周
-                // 重新开始排序
-                const sortWeekType = this.weekList.filter(item=>{
-                  return this.form.week_type.some(weekTypeItem=>item.name == weekTypeItem)
-                })
-
-                const wrapStartDate = new Date(start_date).getTime() - ONE_DAY_TIME
-
-                let count = 0
-                const fn = (startTime) => {
-                  for(let i of sortWeekType){
-                      // 拿到起始日期
-                      const [year, month, day] = this.getYearAndMonthAndDay(new Date(startTime + i.id * ONE_DAY_TIME))
-                      const startDayDate = new Date(year, month, day, beginHour, beginMinute).getTime()
-                      const enDayDate = new Date(year, month, day, endHour, endMinute).getTime()
-                      schedul_time.push([startDayDate, enDayDate])
-                      if(++count >= this.form.class_num) return
-                  }
-                  fn(startTime + ONE_WEEK_TIME)
-                }
-                fn(wrapStartDate)             
-            }
-
-            this.form.schedul_time = schedul_time
-
-            // 根据时间列表生成一份预览的table数据
-            this.previewData = schedul_time.map(schedulItem=>{
-              return {
-                start_time: schedulItem[0],
-                end_time: schedulItem[1],
+             const result = await request({
+              url: "https://mastercenter.cn/schedul/schedul_modify",
+              method: "post",
+              data: {
+                id, 
+                description, 
+                real_time
               }
             })
-
-            this.handleClassNum()
-            this.dialogPreviewVisible = true
-          } else {
-            return false
+            if(result && result.data){
+              this.$baseMessage("修改成功", 'success')
+              this.$refs['form'].resetFields()
+              this.dialogFormVisible = false
+              this.form = this.$options.data().form
+            }else{
+              this.$baseMessage(result.msg ||  this.title + "失败", 'error')
+            }
           }
         })
       },
-
-      async upDateDesc(){
-          // descForm   
-          const result = await request({
-            url: "https://mastercenter.cn/schedul/arranging_modify",
-            method: "post",
-            data: {
-              ...this.descForm
-            }
-          })
-          console.log("result",result)
-          if(result && result.data){
-              this.$baseMessage("修改完成", 'success')
-              this.$refs['descForm'].resetFields()
-              this.dialogDescVisible = false
-              this.descForm = this.$options.data().descForm
-              this.$emit("fetchData")
-          }
-             
-      }
     },
   }
 </script>

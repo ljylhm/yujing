@@ -2,13 +2,14 @@
   <div :class="'logo-container-' + layout">
     <router-link to="/">
       <!-- 这里是logo变更的位置 -->
-      <vab-remix-icon v-if="logo" class="logo" :icon-class="logo" />
+      <!-- <vab-remix-icon v-if="logo" class="logo" :icon-class="logo" /> -->
+      <span class="yj-logo"></span>
       <span
         class="title"
         :class="{ 'hidden-xs-only': layout === 'horizontal' }"
         :title="title"
       >
-        豫璟科技
+        豫璟教育
       </span>
     </router-link>
   </div>
@@ -58,6 +59,17 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: middle;
+  }
+
+  .yj-logo{
+    display: inline-block;
+    width: 50px;
+    height: 40px;
+    background: url(https://imgqn.smm.cn/production/b/image/TizKs20220324223024.png) no-repeat center center;
+    background-size: 100% 100%;
+    position: relative;
+    right: 10px;
+    top: 18px;
   }
 
   .logo-container-horizontal {

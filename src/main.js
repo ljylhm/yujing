@@ -11,7 +11,7 @@ import '@/layouts/export'
 
 if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('@/utils/static')
-  mockXHR()
+  // mockXHR()
 }
 
 Vue.config.productionTip = false

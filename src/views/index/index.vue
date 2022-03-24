@@ -362,7 +362,7 @@
               },
               data: [
                 {
-                  name: 'vue-admin-better',
+                  name: '豫璟教育',
                   value: 15000,
                 },
                 {
