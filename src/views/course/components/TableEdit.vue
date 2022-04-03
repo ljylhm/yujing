@@ -29,7 +29,7 @@
       <el-form-item label="课时数量" prop="name" >
         <div style="width:100px">
             <el-input v-model="form.num_class" min=1 type="number" />
-        </div>  
+        </div>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -90,7 +90,7 @@
       // 获取学生的信息
       async getStudentList(){
          const result = await request({
-              url: "https://mastercenter.cn/user/get_type_user_list",
+              url: "https://mastercenter.cn/api/user/get_type_user_list",
               method: "post",
               data: {
                 page: 1,
@@ -105,7 +105,7 @@
       // 获取科目的信息
       async getSubjectList(){
          const result = await request({
-              url: "https://mastercenter.cn/course/list",
+              url: "https://mastercenter.cn/api/course/list",
               method: "post",
               data: {
                 page: 1,
@@ -122,7 +122,7 @@
             const isEdit = this.title == "编辑"
             const apiName = isEdit ? "update" : "class_add"
             const result = await request({
-              url: "https://mastercenter.cn/student/" + apiName,
+              url: "https://mastercenter.cn/api/student/" + apiName,
               method: "post",
               data: {
                 ...this.form

@@ -46,8 +46,12 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-     
-      <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
+      <el-table-column
+        show-overflow-tooltip
+        label="序号"
+        width="95"
+        align="center"
+      >
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
@@ -86,7 +90,7 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     ></el-pagination>
-    <table-edit ref="edit" v-on:fetchData='fetchData'></table-edit>
+    <table-edit ref="edit" @fetchData="fetchData"></table-edit>
   </div>
 </template>
 
@@ -191,19 +195,17 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: "https://mastercenter.cn/course/list",
-            method: "post",
+            url: 'https://mastercenter.cn/api/course/list',
+            method: 'post',
             data: {
-              ...this.queryForm
-            }
+              ...this.queryForm,
+            },
           })
-          if(result && result.data && result.data.list){
+          if (result && result.data && result.data.list) {
             this.list = result.data.list
             this.total = result.data.total
           }
-        } catch (error) {
-          
-        }
+        } catch (error) {}
         this.listLoading = false
       },
       testMessage() {

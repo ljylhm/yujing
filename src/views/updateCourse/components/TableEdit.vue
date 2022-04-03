@@ -55,7 +55,7 @@
       <el-form-item label="实际课时" prop="real_time">
          <div style="width:100px">
             <el-input v-model="form.real_time" min=0 type="number" />
-        </div>  
+        </div>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -78,7 +78,7 @@
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column 
+        <el-table-column
           label="修改记录"
           prop="event"
           width="500"
@@ -93,7 +93,7 @@
      <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="dialogPreviewVisible = false">确 定</el-button>
     </div>
-    
+
    </el-dialog>
 </div>
 
@@ -203,7 +203,7 @@
 
         const start_date = timeFormat(start_time, "yyyy-MM-dd")
         const start_date_hour = [timeFormat(start_time, "hh:mm"),timeFormat(end_time, "hh:mm")]
-    
+
         if (!row) {
           this.title = '添加'
         } else {
@@ -219,7 +219,7 @@
       async showHistory(row){
         // 查找历史记录
          const result = await request({
-              url: "https://mastercenter.cn/history/list",
+              url: "https://mastercenter.cn/api/history/list",
               method: "post",
               data: {
                 schedul_id: row.id,
@@ -239,11 +239,11 @@
         this.$emit('fetchData')
       },
       format(value){
-        
+
         return timeFormat(value, "yyyy-MM-dd hh:mm")
       },
       getHourAndMin(date){
-        return date.split(":").map(item=>Number(item)) 
+        return date.split(":").map(item=>Number(item))
       },
       getYearAndMonthAndDay(date){
         console.log("date", date)
@@ -252,7 +252,7 @@
       // 获取学生的信息
       async getStudentList(){
          const result = await request({
-              url: "https://mastercenter.cn/user/get_type_user_list",
+              url: "https://mastercenter.cn/api/user/get_type_user_list",
               method: "post",
               data: {
                 page: 1,
@@ -267,7 +267,7 @@
       // 获取学生的信息
       async getTeacherList(){
          const result = await request({
-              url: "https://mastercenter.cn/user/get_type_user_list",
+              url: "https://mastercenter.cn/api/user/get_type_user_list",
               method: "post",
               data: {
                 page: 1,
@@ -282,7 +282,7 @@
       // 获取科目的信息
       async getSubjectList(){
          const result = await request({
-              url: "https://mastercenter.cn/course/list",
+              url: "https://mastercenter.cn/api/course/list",
               method: "post",
               data: {
                 page: 1,
@@ -296,7 +296,7 @@
       // 获取科目的信息
       async getClassRoomList(){
          const result = await request({
-              url: "https://mastercenter.cn/schedul/list",
+              url: "https://mastercenter.cn/api/schedul/list",
               method: "post",
               data: {
                 page: 1,
@@ -325,7 +325,7 @@
             })
 
             const result = await request({
-              url: "https://mastercenter.cn/schedul/add",
+              url: "https://mastercenter.cn/api/schedul/add",
               method: "post",
               data: {
                 ...this.form,
@@ -343,18 +343,18 @@
             }
         })
       },
-      
+
       save() {
         console.log("form", this.form)
         this.$refs['form'].validate(async (valid) => {
           const { id, description, real_time } = this.form
           if (valid) {
              const result = await request({
-              url: "https://mastercenter.cn/schedul/schedul_modify",
+              url: "https://mastercenter.cn/api/schedul/schedul_modify",
               method: "post",
               data: {
-                id, 
-                description, 
+                id,
+                description,
                 real_time
               }
             })

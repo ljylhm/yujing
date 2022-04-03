@@ -7,10 +7,20 @@
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px">
       <el-form-item label="名字" prop="name">
-        <el-input v-model.trim="form.name" autocomplete="off" placeholder="请输入学科名字"></el-input>
+        <el-input
+          v-model.trim="form.name"
+          autocomplete="off"
+          placeholder="请输入学科名字"
+        ></el-input>
       </el-form-item>
       <el-form-item label="描述" prop="description">
-        <el-input type="textarea" :rows="2" v-model.trim="form.description" autocomplete="off" placeholder="请输入学科描述"></el-input>
+        <el-input
+          v-model.trim="form.description"
+          type="textarea"
+          :rows="2"
+          autocomplete="off"
+          placeholder="请输入学科描述"
+        ></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -34,16 +44,20 @@
           description: '',
         },
         rules: {
-          name: [{ required: true, trigger: 'blur', message: '请输入学科名字' }],
-          description: [{ required: true, trigger: 'blur', message: '请输入学科描述' }],
+          name: [
+            { required: true, trigger: 'blur', message: '请输入学科名字' },
+          ],
+          description: [
+            { required: true, trigger: 'blur', message: '请输入学科描述' },
+          ],
         },
         title: '',
         dialogFormVisible: false,
       }
     },
     created() {},
-    mounted(){
-      console.log("this", this)
+    mounted() {
+      console.log('this', this)
     },
     methods: {
       showEdit(row) {
@@ -64,22 +78,22 @@
       save() {
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
-            const isEdit = this.title == "编辑"
-            const apiName = isEdit ? "update" : "add"
+            const isEdit = this.title == '编辑'
+            const apiName = isEdit ? 'update' : 'add'
             const result = await request({
-              url: "https://mastercenter.cn/course/" + apiName,
-              method: "post",
+              url: 'https://mastercenter.cn/api/course/' + apiName,
+              method: 'post',
               data: {
-                ...this.form
-              }
+                ...this.form,
+              },
             })
-            if(result && result.data){
-              this.$baseMessage(this.title + "成功", 'success')
+            if (result && result.data) {
+              this.$baseMessage(this.title + '成功', 'success')
               this.$refs['form'].resetFields()
               this.dialogFormVisible = false
               this.form = this.$options.data().form
-            }else{
-              this.$baseMessage(result.msg ||  this.title + "失败", 'error')
+            } else {
+              this.$baseMessage(result.msg || this.title + '失败', 'error')
             }
           } else {
             return false

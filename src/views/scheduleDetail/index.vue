@@ -1,7 +1,7 @@
 <template>
   <div class="table-container">
     <vab-query-form>
-       <vab-query-form-left-panel :span="4">
+      <vab-query-form-left-panel :span="4">
         <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
           添加
         </el-button>
@@ -21,26 +21,32 @@
           @submit.native.prevent
         >
           <el-form-item label="学科">
-            <el-input v-model="queryForm.course_name" placeholder="请输入学科查询" />
+            <el-input
+              v-model="queryForm.course_name"
+              placeholder="请输入学科查询"
+            />
           </el-form-item>
           <el-form-item label="学生">
-            <el-input v-model="queryForm.student_name" placeholder="请输入学生查询" />
+            <el-input
+              v-model="queryForm.student_name"
+              placeholder="请输入学生查询"
+            />
           </el-form-item>
           <el-form-item label="老师">
-            <el-input v-model="queryForm.teacher_name" placeholder="请输入学生查询" />
+            <el-input
+              v-model="queryForm.teacher_name"
+              placeholder="请输入学生查询"
+            />
           </el-form-item>
           <el-form-item>
             <el-select v-model="queryForm.status" placeholder="请选择">
-              <el-option
-                :label="'全部'"
-                :value="''">
-              </el-option>
+              <el-option :label="'全部'" :value="''"></el-option>
               <el-option
                 v-for="item in tagStatusList"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id">
-              </el-option>
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -67,8 +73,12 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-     
-      <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
+      <el-table-column
+        show-overflow-tooltip
+        label="序号"
+        width="95"
+        align="center"
+      >
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
@@ -86,24 +96,25 @@
         align="center"
       ></el-table-column>
       <el-table-column
-          prop="start_time"
-          label="开始日期"
-          width="300"
-          align="center">
-            <template slot-scope="scope">
-              {{ format(scope.row.start_time * 1000) }}
-           </template>
-        </el-table-column>
-        <el-table-column
-          prop="end_time"
-          label="结束日期"
-          width="300"
-          align="center"
-          >
-           <template slot-scope="scope">
-              {{ format(scope.row.end_time * 1000) }}
-           </template>
-        </el-table-column>
+        prop="start_time"
+        label="开始日期"
+        width="300"
+        align="center"
+      >
+        <template slot-scope="scope">
+          {{ format(scope.row.start_time * 1000) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="end_time"
+        label="结束日期"
+        width="300"
+        align="center"
+      >
+        <template slot-scope="scope">
+          {{ format(scope.row.end_time * 1000) }}
+        </template>
+      </el-table-column>
       <el-table-column
         show-overflow-tooltip
         label="学生"
@@ -122,23 +133,47 @@
         prop="real_time"
         align="center"
       ></el-table-column>
-      <el-table-column show-overflow-tooltip label="课时状态" width="180px" align="center">
+      <el-table-column
+        show-overflow-tooltip
+        label="课时状态"
+        width="180px"
+        align="center"
+      >
         <template #default="{ row }">
-            <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
+          <el-tag :type="tagStatusList[row.status].type">
+            {{ tagStatusList[row.status].name }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="是否生效" width="180px" align="center">
+      <el-table-column
+        show-overflow-tooltip
+        label="是否生效"
+        width="180px"
+        align="center"
+      >
         <template #default="{ row }">
-            <el-tag :type="validStatusList[row.is_valid].type">{{validStatusList[row.is_valid].name}}</el-tag>
+          <el-tag :type="validStatusList[row.is_valid].type">
+            {{ validStatusList[row.is_valid].name }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip label="操作" width="180px">
         <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)" v-if="row.is_valid == 2">修改</el-button>
-          <el-button type="text" v-if="row.status == 1" @click="checkSign(row)">确认签到</el-button>
-          <el-button type="text" @click="handleHistory(row)">历史记录</el-button>
+          <el-button
+            v-if="row.is_valid == 2"
+            type="text"
+            @click="handleEdit(row)"
+          >
+            修改
+          </el-button>
+          <el-button v-if="row.status == 1" type="text" @click="checkSign(row)">
+            确认签到
+          </el-button>
+          <el-button type="text" @click="handleHistory(row)">
+            历史记录
+          </el-button>
           <el-button type="text" @click="deleteCourse(row)">删除</el-button>
-           <!-- this.$refs['edit'].showEdit(row) -->
+          <!-- this.$refs['edit'].showEdit(row) -->
         </template>
       </el-table-column>
     </el-table>
@@ -151,8 +186,8 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     ></el-pagination>
-    <table-edit ref="edit" v-on:fetchData='fetchData'></table-edit>
-    <table-add ref="add" v-on:fetchData='fetchData'></table-add>
+    <table-edit ref="edit" @fetchData="fetchData"></table-edit>
+    <table-add ref="add" @fetchData="fetchData"></table-add>
   </div>
 </template>
 
@@ -167,7 +202,7 @@
     name: 'ComprehensiveTable',
     components: {
       TableEdit,
-      TableAdd
+      TableAdd,
     },
     filters: {
       statusFilter(status) {
@@ -194,56 +229,56 @@
           page: 1,
           limit: 20,
           course_name: '',
-          student_name: "",
-          teacher_name: "",
-          status: ""
+          student_name: '',
+          teacher_name: '',
+          status: '',
         },
-        tagList:{
-          "1": {
+        tagList: {
+          1: {
             id: 1,
-            name: "天",
-            type: "info"
+            name: '天',
+            type: 'info',
           },
-         "2": {
+          2: {
             id: 2,
-            name: "周",
-            type: "warning"
-          }
+            name: '周',
+            type: 'warning',
+          },
         },
-        tagStatusList:{
-          "0": {
+        tagStatusList: {
+          0: {
             id: 0,
-            name: "未签到",
-            type: "info"
+            name: '未签到',
+            type: 'info',
           },
-         "1": {
+          1: {
             id: 1,
-            name: "签到待确认",
-            type: "warning"
+            name: '签到待确认',
+            type: 'warning',
           },
-          "2":{
+          2: {
             id: 2,
-            name: "签到已确认",
-            type: "success"
-          }
+            name: '签到已确认',
+            type: 'success',
+          },
         },
-        validStatusList:{
-          "0": {
-            id:"0",
-            name: "待确认",
-            type: "info"
+        validStatusList: {
+          0: {
+            id: '0',
+            name: '待确认',
+            type: 'info',
           },
-         "1": {
-            id: "1",
-            name: "已失效",
-            type: "warning"
+          1: {
+            id: '1',
+            name: '已失效',
+            type: 'warning',
           },
-          "2":{
-            id: "2",
-            name: "已生效",
-            type: "success"
-          }
-        }
+          2: {
+            id: '2',
+            name: '已生效',
+            type: 'success',
+          },
+        },
       }
     },
     computed: {
@@ -253,78 +288,79 @@
     },
     async created() {
       const id = this.$router.currentRoute.params.id
-      this.queryForm.arranging_id = id
-      this.fetchData()
+      this.queryForm.arranging_id = id
+      this.fetchData()
     },
     beforeDestroy() {},
     mounted() {},
     methods: {
-      async checkStatus(id, status){
-
-        this.$baseConfirm(`你确定要${status == 1 ? '通过' : '不通过'}当前项吗`, null, async () => {
-            
-             this.listLoading = true
-             try {
-                const result = await request({
-                  url: "https://mastercenter.cn/student/class_add_check",
-                  method: "post",
-                  data: {
-                    id,
-                    status
-                  }
-                })
-                this.listLoading = false   
-                if(result && result.data){
-                   this.$baseMessage("完成审核", 'success')
-                   this.fetchData()
-                }
-              } catch (error) {
-                 this.$baseMessage(result.msg || '网络异常', 'error')
-                 this.listLoading = false   
+      async checkStatus(id, status) {
+        this.$baseConfirm(
+          `你确定要${status == 1 ? '通过' : '不通过'}当前项吗`,
+          null,
+          async () => {
+            this.listLoading = true
+            try {
+              const result = await request({
+                url: 'https://mastercenter.cn/api/student/class_add_check',
+                method: 'post',
+                data: {
+                  id,
+                  status,
+                },
+              })
+              this.listLoading = false
+              if (result && result.data) {
+                this.$baseMessage('完成审核', 'success')
+                this.fetchData()
               }
-        }) 
+            } catch (error) {
+              this.$baseMessage(result.msg || '网络异常', 'error')
+              this.listLoading = false
+            }
+          }
+        )
       },
-      checkSign(row){
+      checkSign(row) {
         this.$baseConfirm('你确定要确认签到吗', null, async () => {
-            const result = await request({
-              url: "https://mastercenter.cn/schedul/schedul_modify",
-              method: "post",
-              data: {
-                id: row.id, 
-                status: 2
-              }
-            })
-            if(result && result.data){
-              this.$baseMessage("已确认", 'success')
-            }else{
-              this.$baseMessage(result.msg || "确认" + "失败", 'error')
-            }
-            this.fetchData()
+          const result = await request({
+            url: 'https://mastercenter.cn/api/schedul/schedul_modify',
+            method: 'post',
+            data: {
+              id: row.id,
+              status: 2,
+            },
+          })
+          if (result && result.data) {
+            this.$baseMessage('已确认', 'success')
+          } else {
+            this.$baseMessage(result.msg || '确认' + '失败', 'error')
+          }
+          this.fetchData()
         })
       },
-      handleHistory(row){
-         this.$refs['edit'].showHistory(row)
+      handleHistory(row) {
+        this.$refs['edit'].showHistory(row)
       },
-      deleteCourse(row){
-         this.$baseConfirm('你确定要删除此项吗', null, async () => {
-            const result = await request({
-              url: "https://mastercenter.cn/schedul/delete_course",
-              method: "post",
-              data: {
-                id: row.id,
-              }
-            })
-            if(result && result.data){
-              this.$baseMessage("删除成功", 'success')
-            }else{
-              this.$baseMessage(result.msg || "删除失败", 'error')
-            }
-            this.fetchData()
+      deleteCourse(row) {
+        this.$baseConfirm('你确定要删除此项吗', null, async () => {
+          const result = await request({
+            url: 'https://mastercenter.cn/api/schedul/delete_course',
+            method: 'post',
+            data: {
+              id: row.id,
+            },
+          })
+          if (result && result.data) {
+            this.$baseMessage('删除成功', 'success')
+          } else {
+            this.$baseMessage(result.msg || '删除失败', 'error')
+          }
+          this.fetchData()
         })
       },
-      format(value){
-        
-        return timeFormat(value, "yyyy-MM-dd hh:mm")
+      format(value) {
+        return timeFormat(value, 'yyyy-MM-dd hh:mm')
       },
       tableSortChange() {
         const imageList = []
@@ -342,7 +378,7 @@
           ...row,
           type: 1,
           arranging_id: this.queryForm.arranging_id,
-          start_time: "",
+          start_time: '',
         }
         this.$refs['add'].showEdit(form)
       },
@@ -386,19 +422,17 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: "https://mastercenter.cn/schedul/list",
-            method: "post",
+            url: 'https://mastercenter.cn/api/schedul/list',
+            method: 'post',
             data: {
-              ...this.queryForm
-            }
+              ...this.queryForm,
+            },
           })
-          if(result && result.data && result.data.list){
+          if (result && result.data && result.data.list) {
             this.list = result.data.list
             this.total = result.data.total
           }
-        } catch (error) {
-          
-        }
+        } catch (error) {}
         this.listLoading = false
       },
       testMessage() {

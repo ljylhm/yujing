@@ -63,7 +63,7 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-     
+
       <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
@@ -183,27 +183,27 @@
       async checkStatus(id, status){
 
         this.$baseConfirm(`你确定要${status == 1 ? '通过' : '不通过'}当前项吗`, null, async () => {
-            
+
              this.listLoading = true
              try {
                 const result = await request({
-                  url: "https://mastercenter.cn/student/class_add_check",
+                  url: "https://mastercenter.cn/api/student/class_add_check",
                   method: "post",
                   data: {
                     id,
                     status
                   }
                 })
-                this.listLoading = false   
+                this.listLoading = false
                 if(result && result.data){
                    this.$baseMessage("完成审核", 'success')
                    this.fetchData()
                 }
               } catch (error) {
                  this.$baseMessage(result.msg || '网络异常', 'error')
-                 this.listLoading = false   
+                 this.listLoading = false
               }
-        }) 
+        })
       },
       tableSortChange() {
         const imageList = []
@@ -258,7 +258,7 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: "https://mastercenter.cn/student/class_list",
+            url: "https://mastercenter.cn/api/student/class_list",
             method: "post",
             data: {
               ...this.queryForm
@@ -269,7 +269,7 @@
             this.total = result.data.total
           }
         } catch (error) {
-          
+
         }
         this.listLoading = false
       },

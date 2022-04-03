@@ -2,7 +2,7 @@
  * @description 导出默认网路配置
  **/
 
-//  https://mastercenter.cn/
+//  https://mastercenter.cn/api/
 const network = {
   // 默认的接口地址 如果是开发环境和生产环境走vab-mock-server，当然你也可以选择自己配置成需要的接口地址
   baseURL:
@@ -22,6 +22,6 @@ const network = {
   //无权限code
   noPermissionCode: 401,
   // 链接地址
-  siteUrl: "https://mastercenter.cn"
+  siteUrl: "https://mastercenter.cn/api"
 }
 module.exports = network

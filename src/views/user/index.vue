@@ -20,16 +20,13 @@
           </el-form-item>
           <el-form-item label="用户类型：">
             <el-select v-model="queryForm.type" placeholder="请选择用户类型">
-              <el-option
-                :label="'全部'"
-                :value="''">
-              </el-option>
+              <el-option :label="'全部'" :value="''"></el-option>
               <el-option
                 v-for="(value, key) in statusList"
                 :key="key"
                 :label="value"
-                :value="key">
-              </el-option>
+                :value="key"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -64,18 +61,18 @@
         label="电话号码"
         align="center"
       ></el-table-column>
-       <el-table-column
+      <el-table-column
         show-overflow-tooltip
         prop="birthday"
         label="生日"
         align="center"
       >
         <template #default="{ row }">
-          {{ format(row.birthday) || "--"}}
+          {{ format(row.birthday) || '--' }}
         </template>
       </el-table-column>
 
-      <el-table-column show-overflow-tooltip label="角色"  align="center">
+      <el-table-column show-overflow-tooltip label="角色" align="center">
         <template #default="{ row }">
           <el-tag :type="tagList[row.type]">
             {{ statusList[row.type] }}
@@ -99,7 +96,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     ></el-pagination>
-    <edit ref="edit" v-on:fetchData='fetchData'></edit>
+    <edit ref="edit" @fetchData="fetchData"></edit>
   </div>
 </template>
 
@@ -124,37 +121,36 @@
           page: 1,
           limit: 10,
           name: '',
-          type: ''
+          type: '',
         },
-        statusList:{
-          "1": "学生",
-          "2": "家长",
-          "3": "老师",
-          "4": "管理员"
+        statusList: {
+          1: '学生',
+          2: '家长',
+          3: '老师',
+          4: '管理员',
         },
-        tagList:{
-          "1": "success",
-          "2": "info",
-          "3": "warning",
-          "4": "danger"
-        }
+        tagList: {
+          1: 'success',
+          2: 'info',
+          3: 'warning',
+          4: 'danger',
+        },
       }
-    },
-    created() {
-      this.fetchData()
     },
     computed: {
       height() {
         return this.$baseTableHeight()
       },
     },
+    created() {
+      this.fetchData()
+    },
     methods: {
       setSelectRows(val) {
         this.selectRows = val
       },
-      format(value){
-        
-        return timeFormat(value, "yyyy-MM-dd")
+      format(value) {
+        return timeFormat(value, 'yyyy-MM-dd')
       },
       handleEdit(row) {
         if (row.id) {
@@ -200,21 +196,19 @@
         this.listLoading = true
 
         // 获取列表用户数据
-         try {
+        try {
           const result = await request({
-            url: "https://mastercenter.cn/user/list",
-            method: "post",
+            url: 'https://mastercenter.cn/api/user/list',
+            method: 'post',
             data: {
-              ...this.queryForm
-            }
+              ...this.queryForm,
+            },
           })
-          if(result && result.data && result.data.list){
+          if (result && result.data && result.data.list) {
             this.list = result.data.list
             this.total = result.data.total
           }
-        } catch (error) {
-          
-        }
+        } catch (error) {}
         this.listLoading = false
       },
     },

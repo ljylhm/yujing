@@ -9,19 +9,25 @@
           @submit.native.prevent
         >
           <el-form-item label="学生">
-            <el-input v-model="queryForm.student_name" placeholder="请输入学生查询" />
+            <el-input
+              v-model="queryForm.student_name"
+              placeholder="请输入学生查询"
+            />
           </el-form-item>
           <el-form-item label="学科">
-            <el-input v-model="queryForm.course_name" placeholder="请输学科查询" />
+            <el-input
+              v-model="queryForm.course_name"
+              placeholder="请输学科查询"
+            />
           </el-form-item>
-           <el-form-item>
-             <el-date-picker
-                v-model="queryForm.date"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期">
-              </el-date-picker>
+          <el-form-item>
+            <el-date-picker
+              v-model="queryForm.date"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button
@@ -33,7 +39,6 @@
               查询
             </el-button>
           </el-form-item>
-         
         </el-form>
       </vab-query-form-right-panel>
     </vab-query-form>
@@ -47,8 +52,12 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-     
-      <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
+      <el-table-column
+        show-overflow-tooltip
+        label="序号"
+        width="95"
+        align="center"
+      >
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
@@ -81,7 +90,7 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     ></el-pagination>
-    <table-edit ref="edit" v-on:fetchData='fetchData'></table-edit>
+    <table-edit ref="edit" @fetchData="fetchData"></table-edit>
   </div>
 </template>
 
@@ -119,40 +128,40 @@
           page: 1,
           limit: 20,
           course_name: '',
-          student_name: "",
-          start_time: "",
-          end_time: "",
-          date: ""
+          student_name: '',
+          start_time: '',
+          end_time: '',
+          date: '',
         },
-        tagList:{
-          "1": {
+        tagList: {
+          1: {
             id: 1,
-            name: "天",
-            type: "info"
+            name: '天',
+            type: 'info',
           },
-         "2": {
+          2: {
             id: 2,
-            name: "周",
-            type: "warning"
-          }
+            name: '周',
+            type: 'warning',
+          },
         },
-        tagStatusList:{
-          "0": {
+        tagStatusList: {
+          0: {
             id: 0,
-            name: "待确认",
-            type: "info"
+            name: '待确认',
+            type: 'info',
           },
-         "1": {
+          1: {
             id: 1,
-            name: "已通过",
-            type: "warning"
+            name: '已通过',
+            type: 'warning',
           },
-          "2":{
+          2: {
             id: 2,
-            name: "未通过",
-            type: "success"
-          }
-        }
+            name: '未通过',
+            type: 'success',
+          },
+        },
       }
     },
     computed: {
@@ -166,34 +175,36 @@
     beforeDestroy() {},
     mounted() {},
     methods: {
-      async checkStatus(id, status){
-
-        this.$baseConfirm(`你确定要${status == 1 ? '通过' : '不通过'}当前项吗`, null, async () => {
-            
-             this.listLoading = true
-             try {
-                const result = await request({
-                  url: "https://mastercenter.cn/schedul/arranging_modify",
-                  method: "post",
-                  data: {
-                    id,
-                    status
-                  }
-                })
-                this.listLoading = false   
-                if(result && result.data){
-                   this.$baseMessage("完成审核", 'success')
-                   this.fetchData()
-                }
-              } catch (error) {
-                 this.$baseMessage(result.msg || '网络异常', 'error')
-                 this.listLoading = false   
+      async checkStatus(id, status) {
+        this.$baseConfirm(
+          `你确定要${status == 1 ? '通过' : '不通过'}当前项吗`,
+          null,
+          async () => {
+            this.listLoading = true
+            try {
+              const result = await request({
+                url: 'https://mastercenter.cn/api/schedul/arranging_modify',
+                method: 'post',
+                data: {
+                  id,
+                  status,
+                },
+              })
+              this.listLoading = false
+              if (result && result.data) {
+                this.$baseMessage('完成审核', 'success')
+                this.fetchData()
               }
-        }) 
+            } catch (error) {
+              this.$baseMessage(result.msg || '网络异常', 'error')
+              this.listLoading = false
+            }
+          }
+        )
       },
-      toDetail(id){
+      toDetail(id) {
         this.$router.push({
-          path: `/schedule_detail/${id}`
+          path: `/schedule_detail/${id}`,
         })
       },
       tableSortChange() {
@@ -212,7 +223,7 @@
       handleEdit(row) {
         this.$refs['edit'].showEdit(row)
       },
-      handleDescEdit(row){
+      handleDescEdit(row) {
         this.$refs['edit'].showDescEdit(row)
       },
       handleDelete(row) {
@@ -246,7 +257,7 @@
       },
       handleQuery() {
         this.queryForm.page = 1
-        if(this.queryForm.date){
+        if (this.queryForm.date) {
           this.queryForm.start_time = this.queryForm.date[0].getTime() / 1000
           this.queryForm.end_time = this.queryForm.date[1].getTime() / 1000
         }
@@ -256,19 +267,17 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: "https://mastercenter.cn/stat/student",
-            method: "post",
+            url: 'https://mastercenter.cn/api/stat/student',
+            method: 'post',
             data: {
-              ...this.queryForm
-            }
+              ...this.queryForm,
+            },
           })
-          if(result && result.data && result.data.list){
+          if (result && result.data && result.data.list) {
             this.list = result.data.list
             this.total = result.data.total
           }
-        } catch (error) {
-          
-        }
+        } catch (error) {}
         this.listLoading = false
       },
       testMessage() {

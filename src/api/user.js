@@ -7,16 +7,16 @@ export async function login(data) {
     data = await encryptedData(data)
   }
   return request({
-    url: 'https://mastercenter.cn/auth/login',
+    url: 'https://mastercenter.cn/api/auth/login',
     method: 'post',
-    data
+    data,
   })
 }
 
 export function getUserInfo() {
   return request({
-    url: 'https://mastercenter.cn/user/current',
-    method: 'post'
+    url: 'https://mastercenter.cn/api/user/current',
+    method: 'post',
   })
 }
 

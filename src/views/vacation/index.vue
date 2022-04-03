@@ -9,23 +9,26 @@
           @submit.native.prevent
         >
           <el-form-item label="请假人">
-            <el-input v-model="queryForm.user_name" placeholder="请输入请假人查询" />
+            <el-input
+              v-model="queryForm.user_name"
+              placeholder="请输入请假人查询"
+            />
           </el-form-item>
           <el-form-item label="确认人">
-            <el-input v-model="queryForm.event_confirm_user" placeholder="请输入确认人查询" />
+            <el-input
+              v-model="queryForm.event_confirm_user"
+              placeholder="请输入确认人查询"
+            />
           </el-form-item>
           <el-form-item>
             <el-select v-model="queryForm.status" placeholder="请选择">
-              <el-option
-                :label="'全部'"
-                :value="''">
-              </el-option>
+              <el-option :label="'全部'" :value="''"></el-option>
               <el-option
                 v-for="item in tagStatusList"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id">
-              </el-option>
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -52,8 +55,12 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-     
-      <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
+      <el-table-column
+        show-overflow-tooltip
+        label="序号"
+        width="95"
+        align="center"
+      >
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
@@ -63,13 +70,11 @@
         prop="name"
         align="center"
       ></el-table-column>
-      <el-table-column
-        label="请假人类型"
-        prop="type"
-        align="center"
-      >
+      <el-table-column label="请假人类型" prop="type" align="center">
         <template #default="{ row }">
-            <el-tag :type="typeStatusList[row.type].type">{{typeStatusList[row.type].name}}</el-tag>
+          <el-tag :type="typeStatusList[row.type].type">
+            {{ typeStatusList[row.type].name }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -78,19 +83,38 @@
         prop="event_confirm_user"
         align="center"
       >
-         <template #default="{ row }">
-            {{row.event_confirm_user || "--"}}
+        <template #default="{ row }">
+          {{ row.event_confirm_user || '--' }}
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="课时状态" width="180px" align="center">
+      <el-table-column
+        show-overflow-tooltip
+        label="课时状态"
+        width="180px"
+        align="center"
+      >
         <template #default="{ row }">
-            <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
+          <el-tag :type="tagStatusList[row.status].type">
+            {{ tagStatusList[row.status].name }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip label="操作" width="180px">
         <template #default="{ row }">
-          <el-button type="text" v-if="row.status == 0" @click="checkVacation(row, 1)">确认</el-button>
-          <el-button type="text" v-if="row.status == 0" @click="checkVacation(row, 2)">驳回</el-button>
+          <el-button
+            v-if="row.status == 0"
+            type="text"
+            @click="checkVacation(row, 1)"
+          >
+            确认
+          </el-button>
+          <el-button
+            v-if="row.status == 0"
+            type="text"
+            @click="checkVacation(row, 2)"
+          >
+            驳回
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -103,7 +127,7 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     ></el-pagination>
-    <table-edit ref="edit" v-on:fetchData='fetchData'></table-edit>
+    <table-edit ref="edit" @fetchData="fetchData"></table-edit>
   </div>
 </template>
 
@@ -143,61 +167,61 @@
           page: 1,
           limit: 20,
           user_name: '',
-          event_confirm_user: "",
-          status: "",
-          event: [1,4],
+          event_confirm_user: '',
+          status: '',
+          event: [1, 4],
         },
-        tagList:{
-          "1": {
+        tagList: {
+          1: {
             id: 1,
-            name: "天",
-            type: "info"
+            name: '天',
+            type: 'info',
           },
-         "2": {
+          2: {
             id: 2,
-            name: "周",
-            type: "warning"
-          }
+            name: '周',
+            type: 'warning',
+          },
         },
-        tagStatusList:{
-          "0": {
-            id: "0",
-            name: "未处理",
-            type: "info"
+        tagStatusList: {
+          0: {
+            id: '0',
+            name: '未处理',
+            type: 'info',
           },
-         "1": {
-            id: "1",
-            name: "处理成功",
-            type: "warning"
+          1: {
+            id: '1',
+            name: '处理成功',
+            type: 'warning',
           },
-          "2":{
-            id: "2",
-            name: "驳回",
-            type: "success"
-          }
+          2: {
+            id: '2',
+            name: '驳回',
+            type: 'success',
+          },
         },
-        typeStatusList:{
-          "1": {
-            id: "1",
-            name: "学生",
-            type: "info"
+        typeStatusList: {
+          1: {
+            id: '1',
+            name: '学生',
+            type: 'info',
           },
-         "2": {
-            id: "2",
-            name: "家长",
-            type: "warning"
+          2: {
+            id: '2',
+            name: '家长',
+            type: 'warning',
           },
-          "3": {
-            id: "3",
-            name: "老师",
-            type: "warning"
+          3: {
+            id: '3',
+            name: '老师',
+            type: 'warning',
           },
-          "4": {
-            id: "4",
-            name: "管理员",
-            type: "warning"
-          }
-        }
+          4: {
+            id: '4',
+            name: '管理员',
+            type: 'warning',
+          },
+        },
       }
     },
     computed: {
@@ -207,66 +231,67 @@
     },
     async created() {
       const id = this.$router.currentRoute.params.id
-      this.queryForm.arranging_id = id
-      this.fetchData()
+      this.queryForm.arranging_id = id
+      this.fetchData()
     },
     beforeDestroy() {},
     mounted() {},
     methods: {
-      async checkStatus(id, status){
-
-        this.$baseConfirm(`你确定要${status == 1 ? '通过' : '不通过'}当前项吗`, null, async () => {
-            
-             this.listLoading = true
-             try {
-                const result = await request({
-                  url: "https://mastercenter.cn/student/class_add_check",
-                  method: "post",
-                  data: {
-                    id,
-                    status
-                  }
-                })
-                this.listLoading = false   
-                if(result && result.data){
-                   this.$baseMessage("完成审核", 'success')
-                   this.fetchData()
-                }
-              } catch (error) {
-                 this.$baseMessage(result.msg || '网络异常', 'error')
-                 this.listLoading = false   
+      async checkStatus(id, status) {
+        this.$baseConfirm(
+          `你确定要${status == 1 ? '通过' : '不通过'}当前项吗`,
+          null,
+          async () => {
+            this.listLoading = true
+            try {
+              const result = await request({
+                url: 'https://mastercenter.cn/api/student/class_add_check',
+                method: 'post',
+                data: {
+                  id,
+                  status,
+                },
+              })
+              this.listLoading = false
+              if (result && result.data) {
+                this.$baseMessage('完成审核', 'success')
+                this.fetchData()
               }
-        }) 
+            } catch (error) {
+              this.$baseMessage(result.msg || '网络异常', 'error')
+              this.listLoading = false
+            }
+          }
+        )
       },
-      checkVacation(row, status){
-        const text = status == 1 ? "通过" : "驳回"
+      checkVacation(row, status) {
+        const text = status == 1 ? '通过' : '驳回'
 
         const userType = this.typeStatusList[row.type].id
-        
+
         this.$baseConfirm(`你确定要${text}请假吗`, null, async () => {
-            const result = await request({
-              url: "https://mastercenter.cn/schedul/event_check",
-              method: "post",
-              data: {
-                id: row.id, 
-                status,
-                event: status == 1 ? userType == "3" ? "6" : "9" : ""
-              }
-            })
-            if(result && result.data){
-              this.$baseMessage("已" + text, 'success')
-            }else{
-              this.$baseMessage(result.msg || text + "失败", 'error')
-            }
-            this.fetchData()
+          const result = await request({
+            url: 'https://mastercenter.cn/api/schedul/event_check',
+            method: 'post',
+            data: {
+              id: row.id,
+              status,
+              event: status == 1 ? (userType == '3' ? '6' : '9') : '',
+            },
+          })
+          if (result && result.data) {
+            this.$baseMessage('已' + text, 'success')
+          } else {
+            this.$baseMessage(result.msg || text + '失败', 'error')
+          }
+          this.fetchData()
         })
       },
-      handleHistory(row){
-         this.$refs['edit'].showHistory(row)
+      handleHistory(row) {
+        this.$refs['edit'].showHistory(row)
       },
-      format(value){
-        
-        return timeFormat(value, "yyyy-MM-dd hh:mm")
+      format(value) {
+        return timeFormat(value, 'yyyy-MM-dd hh:mm')
       },
       tableSortChange() {
         const imageList = []
@@ -321,19 +346,17 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: "https://mastercenter.cn/schedul/event_list",
-            method: "post",
+            url: 'https://mastercenter.cn/api/schedul/event_list',
+            method: 'post',
             data: {
-              ...this.queryForm
-            }
+              ...this.queryForm,
+            },
           })
-          if(result && result.data && result.data.list){
+          if (result && result.data && result.data.list) {
             this.list = result.data.list
             this.total = result.data.total
           }
-        } catch (error) {
-          
-        }
+        } catch (error) {}
         this.listLoading = false
       },
       testMessage() {

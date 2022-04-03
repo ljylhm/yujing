@@ -27,7 +27,7 @@
               {{ format(scope.row.end_time) }}
            </template>
         </el-table-column>
-        
+
          <el-table-column
             label="操作"
             align="center"
@@ -36,13 +36,13 @@
               <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
-    
+
     </el-table>
      <div style="text-align: right;padding: 10px 0px">总课时：<span style="color:red;font-weight:600">{{form.predict_time}}</span></div>
      <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="saveMain">确 定</el-button>
     </div>
-    
+
    </el-dialog>
 
 </div>
@@ -169,7 +169,7 @@
       },
       showConfict(){
           // 展示冲突的框框
-          
+
       },
       close() {
         this.$refs['form'].resetFields()
@@ -178,11 +178,11 @@
         this.$emit('fetchData')
       },
       format(value){
-        
+
         return timeFormat(value, "yyyy-MM-dd hh:mm")
       },
       getHourAndMin(date){
-        return date.split(":").map(item=>Number(item)) 
+        return date.split(":").map(item=>Number(item))
       },
       getYearAndMonthAndDay(date){
         console.log("date", date)
@@ -191,7 +191,7 @@
       // 获取学生的信息
       async getStudentList(){
          const result = await request({
-              url: "https://mastercenter.cn/user/get_type_user_list",
+              url: "https://mastercenter.cn/api/user/get_type_user_list",
               method: "post",
               data: {
                 page: 1,
@@ -206,7 +206,7 @@
       // 获取学生的信息
       async getTeacherList(){
          const result = await request({
-              url: "https://mastercenter.cn/user/get_type_user_list",
+              url: "https://mastercenter.cn/api/user/get_type_user_list",
               method: "post",
               data: {
                 page: 1,
@@ -221,7 +221,7 @@
       // 获取科目的信息
       async getSubjectList(){
          const result = await request({
-              url: "https://mastercenter.cn/course/list",
+              url: "https://mastercenter.cn/api/course/list",
               method: "post",
               data: {
                 page: 1,
@@ -235,7 +235,7 @@
       // 获取科目的信息
       async getClassRoomList(){
          const result = await request({
-              url: "https://mastercenter.cn/classroom/list",
+              url: "https://mastercenter.cn/api/classroom/list",
               method: "post",
               data: {
                 page: 1,
@@ -264,7 +264,7 @@
       handleClassNum(){
           // 计算课时
           // 任取一个开始时间和结束时间
-          const oneClassTimes = this.getOneClassTimes() 
+          const oneClassTimes = this.getOneClassTimes()
           const diffClassTimes = oneClassTimes * this.form.class_num
           this.form.predict_time = diffClassTimes
       },
@@ -283,7 +283,7 @@
             })
 
             const result = await request({
-              url: "https://mastercenter.cn/schedul/add",
+              url: "https://mastercenter.cn/api/schedul/add",
               method: "post",
               data: {
                 ...this.form,
@@ -301,7 +301,7 @@
             }
         })
       },
-      
+
       save() {
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
@@ -323,7 +323,7 @@
                 const startDayDate = new Date(year, month, day, beginHour, beginMinute).getTime()
                 const enDayDate = new Date(year, month, day, endHour, endMinute).getTime()
                 for(let i = 0; i < Number(class_num); i++){
-                       schedul_time.push([startDayDate + i * ONE_DAY_TIME, enDayDate + i * ONE_DAY_TIME])              
+                       schedul_time.push([startDayDate + i * ONE_DAY_TIME, enDayDate + i * ONE_DAY_TIME])
                 }
             }else { // 周
                 // 重新开始排序
@@ -345,7 +345,7 @@
                   }
                   fn(startTime + ONE_WEEK_TIME)
                 }
-                fn(wrapStartDate)             
+                fn(wrapStartDate)
             }
 
             this.form.schedul_time = schedul_time
@@ -367,9 +367,9 @@
       },
 
       async upDateDesc(){
-          // descForm   
+          // descForm
           const result = await request({
-            url: "https://mastercenter.cn/schedul/arranging_modify",
+            url: "https://mastercenter.cn/api/schedul/arranging_modify",
             method: "post",
             data: {
               ...this.descForm
@@ -383,7 +383,7 @@
               this.descForm = this.$options.data().descForm
               this.$emit("fetchData")
           }
-             
+
       }
     },
   }
