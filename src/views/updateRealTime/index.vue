@@ -1,33 +1,18 @@
 <template>
   <div class="table-container">
     <vab-query-form>
-      <vab-query-form-left-panel :span="4">
-        <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
-          添加
-        </el-button>
-        <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
-          删除
-        </el-button> -->
-        <!-- <el-button type="primary" @click="testMessage">baseMessage</el-button>
-        <el-button type="primary" @click="testALert">baseAlert</el-button>
-        <el-button type="primary" @click="testConfirm">baseConfirm</el-button>
-        <el-button type="primary" @click="testNotify">baseNotify</el-button> -->
-      </vab-query-form-left-panel>
-      <vab-query-form-right-panel :span="20">
+      <vab-query-form-right-panel :span="24">
         <el-form
           ref="form"
           :model="queryForm"
           :inline="true"
           @submit.native.prevent
         >
-          <el-form-item label="学科">
-            <el-input v-model="queryForm.course_name" placeholder="请输入学科查询" />
-          </el-form-item>
-          <el-form-item label="学生">
-            <el-input v-model="queryForm.student_name" placeholder="请输入学生查询" />
-          </el-form-item>
           <el-form-item label="老师">
-            <el-input v-model="queryForm.teacher_name" placeholder="请输入学生查询" />
+            <el-input v-model="queryForm.user_name" placeholder="请输入调课人查询" />
+          </el-form-item>
+          <el-form-item label="确认人">
+            <el-input v-model="queryForm.event_confirm_user" placeholder="请输入确认人查询" />
           </el-form-item>
           <el-form-item>
             <el-select v-model="queryForm.status" placeholder="请选择">
@@ -61,6 +46,7 @@
       ref="tableSort"
       v-loading="listLoading"
       :data="list"
+      stripe
       :element-loading-text="elementLoadingText"
       :height="height"
       @selection-change="setSelectRows"
@@ -73,51 +59,18 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
-        label="备注"
-        prop="description"
-        align="center"
-        width="200"
-      ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        label="学科名"
-        prop="course_name"
+        label="调课人"
+        prop="name"
         align="center"
       ></el-table-column>
       <el-table-column
         show-overflow-tooltip
-        label="教室"
-        prop="classroom_name"
+        label="确认审批人"
+        prop="event_confirm_user"
         align="center"
-      ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        label="学生"
-        prop="student_name"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        label="老师"
-        prop="teacher_name"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        label="预估课时"
-        prop="predict_time"
-        align="center"
-      ></el-table-column>
-      <!-- <el-table-column
-        show-overflow-tooltip
-        label="实际课时"
-        prop="real_time"
-        align="center"
-      ></el-table-column> -->
-      <el-table-column show-overflow-tooltip label="课时类型" width="180px" align="center">
-        <template #default="{ row }">
-            <el-tag :type="tagList[row.type].type">{{tagList[row.type].name}}</el-tag>
+      >
+         <template #default="{ row }">
+            {{row.event_confirm_user || "--"}}
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip label="课时状态" width="180px" align="center">
@@ -125,13 +78,15 @@
             <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="180px" fixed="right">
+      <el-table-column show-overflow-tooltip label="类型" width="180px" align="center">
         <template #default="{ row }">
-          <el-button type="text" @click="handleDescEdit(row)">修改备注</el-button>
-          <el-button type="text" @click="toDetail(row.id)">查看明细</el-button>
-          <br/>
-          <el-button type="text" v-if="row.status == 0" @click="checkStatus(row.id, 1)">通过</el-button>
-          <el-button type="text" v-if="row.status == 0" @click="checkStatus(row.id, 2)">不通过</el-button>
+            <el-tag :type="typeStatusList[row.type].type">{{typeStatusList[row.type].name}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column show-overflow-tooltip label="操作" width="180px">
+        <template #default="{ row }">
+          <el-button type="text" v-if="row.status == 0" @click="checkVacation(row, 1)">确认</el-button>
+          <el-button type="text" v-if="row.status == 0" @click="checkVacation(row, 2)">驳回</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -152,6 +107,8 @@
   import { getList, doDelete } from '@/api/table'
   import TableEdit from './components/TableEdit'
   import request from '@/utils/request'
+  import { timeFormat } from '@/utils/date'
+
   export default {
     name: 'ComprehensiveTable',
     components: {
@@ -181,10 +138,10 @@
         queryForm: {
           page: 1,
           limit: 20,
-          course_name: '',
-          student_name: "",
-          teacher_name: "",
-          status: ""
+          user_name: '',
+          event_confirm_user: "",
+          status: "",
+          event: [3],
         },
         tagList:{
           "1": {
@@ -200,19 +157,41 @@
         },
         tagStatusList:{
           "0": {
-            id: 0,
-            name: "待确认",
+            id: "0",
+            name: "未处理",
             type: "info"
           },
          "1": {
-            id: 1,
-            name: "已通过",
+            id: "1",
+            name: "处理成功",
             type: "warning"
           },
           "2":{
-            id: 2,
-            name: "未通过",
+            id: "2",
+            name: "驳回",
             type: "success"
+          }
+        },
+        typeStatusList:{
+          "1": {
+            id: "1",
+            name: "学生",
+            type: "info"
+          },
+         "2": {
+            id: "2",
+            name: "家长",
+            type: "warning"
+          },
+          "3": {
+            id: "3",
+            name: "老师",
+            type: "warning"
+          },
+          "4": {
+            id: "4",
+            name: "管理员",
+            type: "warning"
           }
         }
       }
@@ -223,7 +202,9 @@
       },
     },
     async created() {
-      this.fetchData()
+      const id = this.$router.currentRoute.params.id
+      this.queryForm.arranging_id = id
+      this.fetchData()
     },
     beforeDestroy() {},
     mounted() {},
@@ -235,7 +216,7 @@
              this.listLoading = true
              try {
                 const result = await request({
-                  url: "https://mastercenter.cn/schedul/arranging_modify",
+                  url: "https://mastercenter.cn/student/class_add_check",
                   method: "post",
                   data: {
                     id,
@@ -253,10 +234,32 @@
               }
         }) 
       },
-      toDetail(id){
-        this.$router.push({
-          path: `/schedule_detail/${id}`
+      checkVacation(row, status){
+        const text = status == 1 ? "通过" : "驳回"
+        this.$baseConfirm(`你确定要${text}审批吗`, null, async () => {
+            const result = await request({
+              url: "https://mastercenter.cn/schedul/event_check",
+              method: "post",
+              data: {
+                id: row.id, 
+                status,
+                event: status == 1 ? "8" : ""
+              }
+            })
+            if(result && result.data){
+              this.$baseMessage("已" + text, 'success')
+            }else{
+              this.$baseMessage(result.msg || text + "失败", 'error')
+            }
+            this.fetchData()
         })
+      },
+      handleHistory(row){
+         this.$refs['edit'].showHistory(row)
+      },
+      format(value){
+        
+        return timeFormat(value, "yyyy-MM-dd hh:mm")
       },
       tableSortChange() {
         const imageList = []
@@ -273,9 +276,6 @@
       },
       handleEdit(row) {
         this.$refs['edit'].showEdit(row)
-      },
-      handleDescEdit(row){
-        this.$refs['edit'].showDescEdit(row)
       },
       handleDelete(row) {
         if (row.id) {
@@ -314,7 +314,7 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: "https://mastercenter.cn/schedul/arranging_list",
+            url: "https://mastercenter.cn/schedul/event_list",
             method: "post",
             data: {
               ...this.queryForm

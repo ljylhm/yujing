@@ -1,159 +1,11 @@
 <template>
   <div>
-  <el-dialog
-    :title="title"
-    :visible.sync="dialogFormVisible"
-    width="700px"
-    @close="close"
-  >
-    <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-      <el-form-item label="选择学生" filterable  prop="student_id">
-        <el-select v-model="form.student_id" placeholder="请选择" :disabled="title == '编辑'">
-           <el-option
-            v-for="item in studentList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="选择老师" prop="teacher_id">
-        <el-select v-model="form.teacher_id" filterable placeholder="请选择" :disabled="title == '编辑'">
-           <el-option
-            v-for="item in teacherList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="选择科目" prop="course_id">
-        <el-select v-model="form.course_id" placeholder="请选择" :disabled="title == '编辑'">
-           <el-option
-            v-for="item in subjectList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="选择教室" prop="classroom_id">
-        <el-select v-model="form.classroom_id" placeholder="请选择" :disabled="title == '编辑'">
-           <el-option
-            v-for="item in classRoomList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="时间类型" prop="type" >
-        <el-radio-group v-model="form.type">
-          <el-radio :label="1">天</el-radio>
-          <el-radio :label="2">周</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item label="周类型" prop="week_type" v-if="form.type == 2">
-        <el-checkbox-group v-model="form.week_type" size="medium">
-          <el-checkbox v-for="city in weekList" :label="city.name" :key="city.id">{{city.name}}</el-checkbox>
-        </el-checkbox-group>
-
-      </el-form-item>
-      <el-form-item label="首节课开始时间" prop="start_date" >
-        <el-date-picker
-          v-if="form.type == 1"
-          v-model="form.start_date"
-          type="date"
-          align="right"
-          placeholder="开始日期"
-        >
-        </el-date-picker>
-
-         <el-date-picker
-          v-if="form.type == 2"
-          v-model="form.start_date"
-          type="week"
-          format="yyyy 第 WW 周"
-          placeholder="选择周">
-        </el-date-picker>
-
-      </el-form-item>
-      <el-form-item label="首节课时间" prop="start_time">
-         <el-time-picker
-            is-range
-            v-model="form.start_time"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围"
-            format="HH:mm"
-            value-format="HH:mm"
-          >
-         </el-time-picker>
-      </el-form-item>
-      <el-form-item label="课程数量" prop="class_num">
-        <div style="width:100px">
-            <el-input v-model="form.class_num" min=1 type="number" />
-        </div>  
-      </el-form-item>
-      <el-form-item label="课程备注" prop="description" >
-        <div>
-            <el-input v-model="form.description" type="textarea" :rows="2" />
-        </div>  
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="close">取 消</el-button>
-      <el-button type="primary" @click="save">确 定</el-button>
-    </div>
-  </el-dialog>
-
-
    <el-dialog
-    :title="'冲突预览'"
-    :visible.sync="dialogConflictVisible"
-    width="800px"
-    custom-class="dialog-preview"
-  >
-    <el-table :data="conflictData">
-        <el-table-column
-          prop="start_time"
-          label="开始日期"
-          width="200"
-          align="center">
-            <template slot-scope="scope">
-              {{ format(scope.row.start_time * 1000) }}
-           </template>
-        </el-table-column>
-        <el-table-column
-          prop="end_time"
-          label="结束日期"
-          width="200"
-          align="center"
-          >
-           <template slot-scope="scope">
-              {{ format(scope.row.end_time * 1000) }}
-           </template>
-        </el-table-column>
-        <el-table-column
-          prop="key"
-          label="冲突原因"
-          align="center"
-          >
-        </el-table-column>
-    </el-table>
-     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogConflictVisible=false">确 定</el-button>
-    </div>
-    
-   </el-dialog>
-
-   <el-dialog
-    :title="'预览'"
+    :title="'课程冲突'"
     :visible.sync="dialogPreviewVisible"
     width="800px"
     custom-class="dialog-preview"
+    @close="close"
   >
     <el-table :data="previewData">
         <el-table-column
@@ -193,24 +45,6 @@
     
    </el-dialog>
 
-    <el-dialog
-    :title="'编辑'"
-    :visible.sync="dialogDescVisible"
-    width="800px"
-    custom-class="dialog-preview"
-    @close="close"
-  >
-    <el-form ref="descForm" :model="descForm" label-width="120px">
-      <el-form-item label="课程备注" prop="description" >
-        <div>
-            <el-input v-model="descForm.description" type="textarea" :rows="2" />
-        </div>  
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="upDateDesc()">确 定</el-button>
-    </div>
-   </el-dialog>
 </div>
 
 
@@ -262,7 +96,6 @@
         dialogFormVisible: false,
         dialogPreviewVisible: false,
         dialogDescVisible: false,
-        dialogConflictVisible: false,
         studentList: [],
         teacherList: [],
         subjectList: [],
@@ -305,8 +138,7 @@
           date: '2016-05-03',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
-        }],
-        conflictData: []
+        }]
       }
     },
     created() {},
@@ -453,11 +285,6 @@
                 schedul_time
               }
             })
-            if(result && result.code == "1002"){
-              this.conflictData = result.data
-              this.dialogConflictVisible = true
-              return 
-            }
             if(result && result.data){
               this.$baseMessage("添加成功", 'success')
               this.$refs['form'].resetFields()

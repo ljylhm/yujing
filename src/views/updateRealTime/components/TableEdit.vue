@@ -192,7 +192,6 @@
     },
     methods: {
       showEdit(row) {
-        console.log("123321")
         this.getStudentList()
         this.getTeacherList()
         this.getSubjectList()

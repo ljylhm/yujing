@@ -91,10 +91,11 @@ instance.interceptors.response.use(
       return data
     } else {
       handleCode(code, msg)
-      return Promise.reject(
-        'vue-admin-beautiful请求异常拦截:' +
-          JSON.stringify({ url: config.url, code, msg }) || 'Error'
-      )
+      return Promise.resolve(response.data)
+      // return Promise.reject(
+      //   'vue-admin-beautiful请求异常拦截:' +
+      //     JSON.stringify({ url: config.url, code, msg }) || 'Error'
+      // )
     }
   },
   (error) => {

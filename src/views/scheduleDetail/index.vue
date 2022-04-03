@@ -1,7 +1,19 @@
 <template>
   <div class="table-container">
     <vab-query-form>
-      <vab-query-form-right-panel :span="24">
+       <vab-query-form-left-panel :span="4">
+        <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
+          添加
+        </el-button>
+        <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
+          删除
+        </el-button> -->
+        <!-- <el-button type="primary" @click="testMessage">baseMessage</el-button>
+        <el-button type="primary" @click="testALert">baseAlert</el-button>
+        <el-button type="primary" @click="testConfirm">baseConfirm</el-button>
+        <el-button type="primary" @click="testNotify">baseNotify</el-button> -->
+      </vab-query-form-left-panel>
+      <vab-query-form-right-panel :span="20">
         <el-form
           ref="form"
           :model="queryForm"
@@ -115,11 +127,17 @@
             <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column show-overflow-tooltip label="是否生效" width="180px" align="center">
+        <template #default="{ row }">
+            <el-tag :type="validStatusList[row.is_valid].type">{{validStatusList[row.is_valid].name}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column show-overflow-tooltip label="操作" width="180px">
         <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)">修改</el-button>
+          <el-button type="text" @click="handleEdit(row)" v-if="row.is_valid == 2">修改</el-button>
           <el-button type="text" v-if="row.status == 1" @click="checkSign(row)">确认签到</el-button>
           <el-button type="text" @click="handleHistory(row)">历史记录</el-button>
+          <el-button type="text" @click="deleteCourse(row)">删除</el-button>
            <!-- this.$refs['edit'].showEdit(row) -->
         </template>
       </el-table-column>
@@ -134,12 +152,14 @@
       @size-change="handleSizeChange"
     ></el-pagination>
     <table-edit ref="edit" v-on:fetchData='fetchData'></table-edit>
+    <table-add ref="add" v-on:fetchData='fetchData'></table-add>
   </div>
 </template>
 
 <script>
   import { getList, doDelete } from '@/api/table'
   import TableEdit from './components/TableEdit'
+  import TableAdd from './components/TableAdd'
   import request from '@/utils/request'
   import { timeFormat } from '@/utils/date'
 
@@ -147,6 +167,7 @@
     name: 'ComprehensiveTable',
     components: {
       TableEdit,
+      TableAdd
     },
     filters: {
       statusFilter(status) {
@@ -203,6 +224,23 @@
           "2":{
             id: 2,
             name: "签到已确认",
+            type: "success"
+          }
+        },
+        validStatusList:{
+          "0": {
+            id:"0",
+            name: "待确认",
+            type: "info"
+          },
+         "1": {
+            id: "1",
+            name: "已失效",
+            type: "warning"
+          },
+          "2":{
+            id: "2",
+            name: "已生效",
             type: "success"
           }
         }
@@ -267,8 +305,25 @@
       handleHistory(row){
          this.$refs['edit'].showHistory(row)
       },
+      deleteCourse(row){
+         this.$baseConfirm('你确定要删除此项吗', null, async () => {
+            const result = await request({
+              url: "https://mastercenter.cn/schedul/delete_course",
+              method: "post",
+              data: {
+                id: row.id,
+              }
+            })
+            if(result && result.data){
+              this.$baseMessage("删除成功", 'success')
+            }else{
+              this.$baseMessage(result.msg || "删除失败", 'error')
+            }
+            this.fetchData()
+        })
+      },
       format(value){
-        console.log("value", value)
+        
         return timeFormat(value, "yyyy-MM-dd hh:mm")
       },
       tableSortChange() {
@@ -282,7 +337,14 @@
         this.selectRows = val
       },
       handleAdd() {
-        this.$refs['edit'].showEdit()
+        const row = this.list[0]
+        const form = {
+          ...row,
+          type: 1,
+          arranging_id: this.queryForm.arranging_id,
+          start_time: "",
+        }
+        this.$refs['add'].showEdit(form)
       },
       handleEdit(row) {
         this.$refs['edit'].showEdit(row)

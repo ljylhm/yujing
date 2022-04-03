@@ -111,49 +111,11 @@
 
 
    <el-dialog
-    :title="'冲突预览'"
+    :title="'预览'"
     :visible.sync="dialogConflictVisible"
     width="800px"
     custom-class="dialog-preview"
-  >
-    <el-table :data="conflictData">
-        <el-table-column
-          prop="start_time"
-          label="开始日期"
-          width="200"
-          align="center">
-            <template slot-scope="scope">
-              {{ format(scope.row.start_time * 1000) }}
-           </template>
-        </el-table-column>
-        <el-table-column
-          prop="end_time"
-          label="结束日期"
-          width="200"
-          align="center"
-          >
-           <template slot-scope="scope">
-              {{ format(scope.row.end_time * 1000) }}
-           </template>
-        </el-table-column>
-        <el-table-column
-          prop="key"
-          label="冲突原因"
-          align="center"
-          >
-        </el-table-column>
-    </el-table>
-     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogConflictVisible=false">确 定</el-button>
-    </div>
-    
-   </el-dialog>
-
-   <el-dialog
-    :title="'预览'"
-    :visible.sync="dialogPreviewVisible"
-    width="800px"
-    custom-class="dialog-preview"
+    @close="close"
   >
     <el-table :data="previewData">
         <el-table-column
@@ -192,6 +154,53 @@
     </div>
     
    </el-dialog>
+
+   <el-dialog
+    :title="'预览'"
+    :visible.sync="dialogPreviewVisible"
+    width="800px"
+    custom-class="dialog-preview"
+    @close="close"
+  >
+    <el-table :data="previewData">
+        <el-table-column
+          prop="start_time"
+          label="开始日期"
+          width="300"
+          align="center">
+            <template slot-scope="scope">
+              {{ format(scope.row.start_time) }}
+           </template>
+        </el-table-column>
+        <el-table-column
+          prop="end_time"
+          label="结束日期"
+          width="300"
+          align="center"
+          >
+           <template slot-scope="scope">
+              {{ format(scope.row.end_time) }}
+           </template>
+        </el-table-column>
+        
+         <el-table-column
+            label="操作"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
+            </template>
+          </el-table-column>
+    
+    </el-table>
+     <div style="text-align: right;padding: 10px 0px">总课时：<span style="color:red;font-weight:600">{{form.predict_time}}</span></div>
+     <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="saveMain">确 定</el-button>
+    </div>
+    
+   </el-dialog>
+
+
 
     <el-dialog
     :title="'编辑'"
@@ -453,11 +462,6 @@
                 schedul_time
               }
             })
-            if(result && result.code == "1002"){
-              this.conflictData = result.data
-              this.dialogConflictVisible = true
-              return 
-            }
             if(result && result.data){
               this.$baseMessage("添加成功", 'success')
               this.$refs['form'].resetFields()

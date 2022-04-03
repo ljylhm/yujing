@@ -1,47 +1,18 @@
 <template>
   <div class="table-container">
     <vab-query-form>
-      <vab-query-form-left-panel :span="4">
-        <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
-          添加
-        </el-button>
-        <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
-          删除
-        </el-button> -->
-        <!-- <el-button type="primary" @click="testMessage">baseMessage</el-button>
-        <el-button type="primary" @click="testALert">baseAlert</el-button>
-        <el-button type="primary" @click="testConfirm">baseConfirm</el-button>
-        <el-button type="primary" @click="testNotify">baseNotify</el-button> -->
-      </vab-query-form-left-panel>
-      <vab-query-form-right-panel :span="20">
+      <vab-query-form-right-panel :span="24">
         <el-form
           ref="form"
           :model="queryForm"
           :inline="true"
           @submit.native.prevent
         >
-          <el-form-item label="学科">
-            <el-input v-model="queryForm.course_name" placeholder="请输入学科查询" />
-          </el-form-item>
           <el-form-item label="学生">
             <el-input v-model="queryForm.student_name" placeholder="请输入学生查询" />
           </el-form-item>
-          <el-form-item label="老师">
-            <el-input v-model="queryForm.teacher_name" placeholder="请输入学生查询" />
-          </el-form-item>
-          <el-form-item>
-            <el-select v-model="queryForm.status" placeholder="请选择">
-              <el-option
-                :label="'全部'"
-                :value="''">
-              </el-option>
-              <el-option
-                v-for="item in tagStatusList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
+          <el-form-item label="学科">
+            <el-input v-model="queryForm.course_name" placeholder="请输学科查询" />
           </el-form-item>
           <el-form-item>
             <el-button
@@ -74,21 +45,8 @@
       </el-table-column>
       <el-table-column
         show-overflow-tooltip
-        label="备注"
-        prop="description"
-        align="center"
-        width="200"
-      ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
         label="学科名"
         prop="course_name"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        label="教室"
-        prop="classroom_name"
         align="center"
       ></el-table-column>
       <el-table-column
@@ -99,41 +57,10 @@
       ></el-table-column>
       <el-table-column
         show-overflow-tooltip
-        label="老师"
-        prop="teacher_name"
+        label="剩余课时"
+        prop="total"
         align="center"
       ></el-table-column>
-      <el-table-column
-        show-overflow-tooltip
-        label="预估课时"
-        prop="predict_time"
-        align="center"
-      ></el-table-column>
-      <!-- <el-table-column
-        show-overflow-tooltip
-        label="实际课时"
-        prop="real_time"
-        align="center"
-      ></el-table-column> -->
-      <el-table-column show-overflow-tooltip label="课时类型" width="180px" align="center">
-        <template #default="{ row }">
-            <el-tag :type="tagList[row.type].type">{{tagList[row.type].name}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column show-overflow-tooltip label="课时状态" width="180px" align="center">
-        <template #default="{ row }">
-            <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="180px" fixed="right">
-        <template #default="{ row }">
-          <el-button type="text" @click="handleDescEdit(row)">修改备注</el-button>
-          <el-button type="text" @click="toDetail(row.id)">查看明细</el-button>
-          <br/>
-          <el-button type="text" v-if="row.status == 0" @click="checkStatus(row.id, 1)">通过</el-button>
-          <el-button type="text" v-if="row.status == 0" @click="checkStatus(row.id, 2)">不通过</el-button>
-        </template>
-      </el-table-column>
     </el-table>
     <el-pagination
       :background="background"
@@ -182,9 +109,7 @@
           page: 1,
           limit: 20,
           course_name: '',
-          student_name: "",
-          teacher_name: "",
-          status: ""
+          student_name: ""
         },
         tagList:{
           "1": {
@@ -314,7 +239,7 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: "https://mastercenter.cn/schedul/arranging_list",
+            url: "https://mastercenter.cn/stat/student_surplus",
             method: "post",
             data: {
               ...this.queryForm

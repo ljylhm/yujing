@@ -153,7 +153,7 @@
         this.selectRows = val
       },
       format(value){
-        console.log("value", value)
+        
         return timeFormat(value, "yyyy-MM-dd")
       },
       handleEdit(row) {
