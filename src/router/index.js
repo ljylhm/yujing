@@ -22,6 +22,11 @@ export const constantRoutes = [
     hidden: true,
   },
   {
+    path: '/guide',
+    component: () => import('@/views/register/index'),
+    hidden: true,
+  },
+  {
     path: '/401',
     name: '401',
     component: () => import('@/views/401'),
@@ -32,7 +37,7 @@ export const constantRoutes = [
     name: '404',
     component: () => import('@/views/404'),
     hidden: true,
-  },
+  }
 ]
 
 export const asyncRoutes = [

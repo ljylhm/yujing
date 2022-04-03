@@ -42,6 +42,7 @@
     "dayjs": "^1.10.7",
     "echarts": "5.0.2",
     "element-ui": "^2.15.6",
+    "imagemin-gifsicle": "^7.0.0",
     "jsencrypt": "^3.2.1",
     "lodash": "^4.17.21",
     "maptalks": "^0.49.5",

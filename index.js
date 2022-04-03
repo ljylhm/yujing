@@ -1,4 +1,4 @@
 const rimraf = require("rimraf")
-rimraf("./.git",()=>{
+rimraf("./node_modules",()=>{
     console.log("结束1")
 })
