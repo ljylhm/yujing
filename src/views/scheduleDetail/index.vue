@@ -5,6 +5,7 @@
         <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
           添加
         </el-button>
+        <el-link type="primary" :href="exportUrl">导出</el-link>
         <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
           删除
         </el-button> -->
@@ -279,6 +280,7 @@
             type: 'success',
           },
         },
+        exportUrl: ""
       }
     },
     computed: {
@@ -289,6 +291,7 @@
     async created() {
       const id = this.$router.currentRoute.params.id
       this.queryForm.arranging_id = id
+      this.exportUrl = `https://mastercenter.cn/api/export?arranging_id=${id}`
       this.fetchData()
     },
     beforeDestroy() {},
