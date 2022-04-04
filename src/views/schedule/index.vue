@@ -67,60 +67,60 @@
       @sort-change="tableSortChange"
     >
 
-      <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
+      <el-table-column  label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="备注"
         prop="description"
         align="center"
         width="200"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学科名"
         prop="course_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="教室"
         prop="classroom_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学生"
         prop="student_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="老师"
         prop="teacher_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="预估课时"
         prop="predict_time"
         align="center"
       ></el-table-column>
       <!-- <el-table-column
-        show-overflow-tooltip
+        
         label="实际课时"
         prop="real_time"
         align="center"
       ></el-table-column> -->
-      <el-table-column show-overflow-tooltip label="课时类型" width="180px" align="center">
+      <el-table-column  label="课时类型" width="180px" align="center">
         <template #default="{ row }">
             <el-tag :type="tagList[row.type].type">{{tagList[row.type].name}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="课时状态" width="180px" align="center">
+      <el-table-column  label="课时状态" width="180px" align="center">
         <template #default="{ row }">
             <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
         </template>

@@ -53,7 +53,7 @@
       @sort-change="tableSortChange"
     >
       <el-table-column
-        show-overflow-tooltip
+        
         label="序号"
         width="95"
         align="center"
@@ -63,19 +63,19 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学科名"
         prop="course_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学生"
         prop="student_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="完成课时"
         prop="real_time"
         align="center"

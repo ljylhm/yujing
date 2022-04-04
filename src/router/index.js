@@ -66,10 +66,10 @@ export const asyncRoutes = [
       {
         path: 'index',
         name: 'Index',
-        component: () => import('@/views/classroom/index'),
+        component: () => import('@/views/user/index'),
         meta: {
-          title: '教室管理',
-          icon: 'home',
+          title: '用户管理',
+          icon: 'user',
           affix: true,
         },
       },
@@ -81,12 +81,12 @@ export const asyncRoutes = [
     redirect: 'noRedirect',
     children: [
       {
-        path: 'user',
-        name: 'User',
-        component: () => import('@/views/user/index'),
+        path: 'classRoom',
+        name: '/classRoom',
+        component: () => import('@/views/classroom/index'),
         meta: {
-          title: '用户管理',
-          icon: 'user',
+          title: '教室管理',
+          icon: 'home',
           affix: true,
         },
       },

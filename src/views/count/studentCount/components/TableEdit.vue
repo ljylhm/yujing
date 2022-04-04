@@ -352,6 +352,9 @@
       format(value){
         return timeFormat(value, "yyyy-MM-dd hh:mm")
       },
+      timeFormatNew(value, s){
+        return timeFormat(value, s)
+      },
       getHourAndMin(date){
         return date.split(":").map(item=>Number(item))
       },

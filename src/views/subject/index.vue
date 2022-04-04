@@ -47,7 +47,7 @@
       @sort-change="tableSortChange"
     >
       <el-table-column
-        show-overflow-tooltip
+        
         label="序号"
         width="95"
         align="center"
@@ -57,24 +57,24 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学科名"
         prop="name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学科描述"
         prop="description"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="创建时间"
         prop="created_at"
         width="200"
       ></el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="180px">
+      <el-table-column  label="操作" width="180px">
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>

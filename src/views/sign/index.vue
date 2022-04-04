@@ -51,7 +51,7 @@
       @sort-change="tableSortChange"
     >
       <el-table-column
-        show-overflow-tooltip
+        
         label="序号"
         width="95"
         align="center"
@@ -67,7 +67,7 @@
         width="200"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学科名"
         prop="course_name"
         align="center"
@@ -93,25 +93,25 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学生"
         prop="student_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="老师"
         prop="teacher_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="实际课时"
         prop="real_time"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="课时状态"
         width="180px"
         align="center"
@@ -122,7 +122,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="180px">
+      <el-table-column  label="操作" width="180px">
         <template #default="{ row }">
           <el-button v-if="row.status == 1" type="text" @click="checkSign(row)">
             确认签到

@@ -31,23 +31,23 @@
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <el-table-column
-            show-overflow-tooltip
+            
             prop="name"
             label="name"
           ></el-table-column>
           <el-table-column
-            show-overflow-tooltip
+            
             prop="path"
             label="路径"
           ></el-table-column>
-          <el-table-column show-overflow-tooltip label="是否隐藏">
+          <el-table-column  label="是否隐藏">
             <template #default="{ row }">
               <span>
                 {{ row.hidden ? '是' : '否' }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip label="是否一直显示当前节点">
+          <el-table-column  label="是否一直显示当前节点">
             <template #default="{ row }">
               <span>
                 {{ row.alwaysShow ? '是' : '否' }}
@@ -55,21 +55,21 @@
             </template>
           </el-table-column>
           <el-table-column
-            show-overflow-tooltip
+            
             prop="component"
             label="vue文件路径"
           ></el-table-column>
           <el-table-column
-            show-overflow-tooltip
+            
             prop="redirect"
             label="重定向"
           ></el-table-column>
           <el-table-column
-            show-overflow-tooltip
+            
             prop="meta.title"
             label="标题"
           ></el-table-column>
-          <el-table-column show-overflow-tooltip label="图标">
+          <el-table-column  label="图标">
             <template #default="{ row }">
               <span v-if="row.meta">
                 <vab-icon
@@ -79,28 +79,28 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip label="是否固定">
+          <el-table-column  label="是否固定">
             <template #default="{ row }">
               <span v-if="row.meta">
                 {{ row.meta.affix ? '是' : '否' }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip label="是否无缓存">
+          <el-table-column  label="是否无缓存">
             <template #default="{ row }">
               <span v-if="row.meta">
                 {{ row.meta.noKeepAlive ? '是' : '否' }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip label="badge">
+          <el-table-column  label="badge">
             <template #default="{ row }">
               <span v-if="row.meta">
                 {{ row.meta.badge }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip label="操作" width="200">
+          <el-table-column  label="操作" width="200">
             <template #default="{ row }">
               <el-button type="text" @click="handleEdit(row)">编辑</el-button>
               <el-button type="text" @click="handleDelete(row)">删除</el-button>

@@ -52,31 +52,31 @@
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <el-table-column
-            show-overflow-tooltip
+            
             prop="name"
             label="name"
           ></el-table-column>
           <el-table-column
-            show-overflow-tooltip
+            
             prop="path"
             label="path"
           ></el-table-column>
           <el-table-column
-            show-overflow-tooltip
+            
             prop="component"
             label="component"
           ></el-table-column>
           <el-table-column
-            show-overflow-tooltip
+            
             prop="redirect"
             label="redirect"
           ></el-table-column>
           <el-table-column
-            show-overflow-tooltip
+            
             prop="meta.title"
             label="标题"
           ></el-table-column>
-          <el-table-column show-overflow-tooltip label="图标">
+          <el-table-column  label="图标">
             <template #default="{ row }">
               <span v-if="row.meta">
                 <vab-icon
@@ -86,21 +86,21 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip label="是否固定">
+          <el-table-column  label="是否固定">
             <template #default="{ row }">
               <span v-if="row.meta">
                 {{ row.meta.affix }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip label="是否无缓存">
+          <el-table-column  label="是否无缓存">
             <template #default="{ row }">
               <span v-if="row.meta">
                 {{ row.meta.noKeepAlive }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column show-overflow-tooltip label="badge">
+          <el-table-column  label="badge">
             <template #default="{ row }">
               <span v-if="row.meta">
                 {{ row.meta.badge }}

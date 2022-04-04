@@ -53,7 +53,7 @@
       @sort-change="tableSortChange"
     >
 
-      <el-table-column show-overflow-tooltip label="序号" width="95" align="center">
+      <el-table-column  label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
@@ -73,7 +73,58 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        label="教室调整"
+        prop="type"
+        width="220"
+        align="center"
+      >
+        <template #default="{ row }">
+           由<span class="tip-warn">{{row.pre_classroom_name}}</span>调整到<span class="tip-warn">{{row.now_classroom_name}}</span>
+        </template>
+      </el-table-column>
+       <el-table-column
+        label="原时间"
+        prop="type"
+        width="220"
+        align="center"
+      >
+        <template #default="{ row }">
+          {{timeFormatNew(row.pre_start_time * 1000, "yyyy-MM-dd")}}{{" "}}{{timeFormatNew(row.pre_start_time * 1000, "hh:mm")}}-{{timeFormatNew(row.pre_end_time * 1000, "hh:mm")}}
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="现时间"
+        prop="type"
+        width="220"
+        align="center"
+      >
+        <template #default="{ row }">
+          {{timeFormatNew(row.now_start_time * 1000, "yyyy-MM-dd")}}{{" "}}{{timeFormatNew(row.now_start_time * 1000, "hh:mm")}}-{{timeFormatNew(row.now_end_time * 1000, "hh:mm")}}
+        </template>
+      </el-table-column>
+       <el-table-column
+        label="原课时"
+        prop="pre_real_time"
+        width="80"
+        align="center"
+      >
+      </el-table-column>
+       <el-table-column
+        label="现课时"
+        prop="now_real_time"
+        width="80"
+        align="center"
+      >
+      </el-table-column>
+       <el-table-column
+        label="调课原因"
+        prop="description"
+        width="220"
+        align="center"
+      >
+      </el-table-column>
+      <el-table-column
+        
         label="确认审批人"
         prop="event_confirm_user"
         align="center"
@@ -82,12 +133,12 @@
             {{row.event_confirm_user || "--"}}
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="课时状态" width="180px" align="center">
+      <el-table-column  label="课时状态" width="180px" align="center">
         <template #default="{ row }">
             <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="180px">
+      <el-table-column  label="操作" width="180px">
         <template #default="{ row }">
           <el-button type="text" v-if="row.status == 0" @click="checkVacation(row, 1)">确认</el-button>
           <el-button type="text" v-if="row.status == 0" @click="checkVacation(row, 2)">驳回</el-button>
@@ -106,6 +157,12 @@
     <table-edit ref="edit" v-on:fetchData='fetchData'></table-edit>
   </div>
 </template>
+
+<style scoped>
+  .tip-warn{
+    font-weight: 600;
+  }
+</style>
 
 <script>
   import { getList, doDelete } from '@/api/table'
@@ -263,8 +320,10 @@
          this.$refs['edit'].showHistory(row)
       },
       format(value){
-
         return timeFormat(value, "yyyy-MM-dd hh:mm")
+      },
+      timeFormatNew(v,s){
+        return timeFormat(v, s)      
       },
       tableSortChange() {
         const imageList = []

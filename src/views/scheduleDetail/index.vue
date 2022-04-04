@@ -75,7 +75,7 @@
       @sort-change="tableSortChange"
     >
       <el-table-column
-        show-overflow-tooltip
+        
         label="序号"
         width="95"
         align="center"
@@ -91,7 +91,7 @@
         width="200"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学科名"
         prop="course_name"
         align="center"
@@ -99,7 +99,7 @@
       <el-table-column
         prop="start_time"
         label="开始日期"
-        width="300"
+        width="220"
         align="center"
       >
         <template slot-scope="scope">
@@ -109,7 +109,7 @@
       <el-table-column
         prop="end_time"
         label="结束日期"
-        width="300"
+        width="220"
         align="center"
       >
         <template slot-scope="scope">
@@ -117,27 +117,27 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="学生"
         prop="student_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="老师"
         prop="teacher_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="实际课时"
         prop="real_time"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="课时状态"
-        width="180px"
+        width="160px"
         align="center"
       >
         <template #default="{ row }">
@@ -147,9 +147,9 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="是否生效"
-        width="180px"
+        width="120px"
         align="center"
       >
         <template #default="{ row }">
@@ -158,7 +158,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="180px">
+      <el-table-column  label="操作" width="180px">
         <template #default="{ row }">
           <el-button
             v-if="row.is_valid == 2"

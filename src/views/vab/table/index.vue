@@ -47,26 +47,26 @@
       @sort-change="tableSortChange"
     >
       <el-table-column
-        show-overflow-tooltip
+        
         type="selection"
         width="55"
       ></el-table-column>
-      <el-table-column show-overflow-tooltip label="序号" width="95">
+      <el-table-column  label="序号" width="95">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="title"
         label="标题"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="作者"
         prop="author"
       ></el-table-column>
-      <el-table-column show-overflow-tooltip label="头像">
+      <el-table-column  label="头像">
         <template #default="{ row }">
           <el-image
             v-if="imgShow"
@@ -76,12 +76,12 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="点击量"
         prop="pageViews"
         sortable
       ></el-table-column>
-      <el-table-column show-overflow-tooltip label="状态">
+      <el-table-column  label="状态">
         <template #default="{ row }">
           <el-tooltip
             :content="row.status"
@@ -96,12 +96,12 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="时间"
         prop="datetime"
         width="200"
       ></el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="180px">
+      <el-table-column  label="操作" width="180px">
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>

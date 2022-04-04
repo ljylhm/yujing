@@ -73,7 +73,7 @@
     >
       <el-table :data="previewData" stripe>
         <el-table-column
-          show-overflow-tooltip
+          
           label="序号"
           width="95"
           align="center"

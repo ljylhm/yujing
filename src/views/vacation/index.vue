@@ -56,7 +56,7 @@
       @sort-change="tableSortChange"
     >
       <el-table-column
-        show-overflow-tooltip
+        
         label="序号"
         width="95"
         align="center"
@@ -78,7 +78,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
         label="审批人"
         prop="event_confirm_user"
         align="center"
@@ -87,8 +86,14 @@
           {{ row.event_confirm_user || '--' }}
         </template>
       </el-table-column>
+       <el-table-column
+        label="请假原因"
+        prop="description"
+        align="center"
+      >
+      </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="课时状态"
         width="180px"
         align="center"
@@ -99,7 +104,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="180px">
+      <el-table-column  label="操作" width="180px">
         <template #default="{ row }">
           <el-button
             v-if="row.status == 0"

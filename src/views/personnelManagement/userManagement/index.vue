@@ -33,24 +33,24 @@
       :element-loading-text="elementLoadingText"
       @selection-change="setSelectRows"
     >
-      <el-table-column show-overflow-tooltip type="selection"></el-table-column>
+      <el-table-column  type="selection"></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="id"
         label="id"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="username"
         label="用户名"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="email"
         label="邮箱"
       ></el-table-column>
 
-      <el-table-column show-overflow-tooltip label="权限">
+      <el-table-column  label="权限">
         <template #default="{ row }">
           <el-tag v-for="(item, index) in row.permissions" :key="index">
             {{ item }}
@@ -59,11 +59,11 @@
       </el-table-column>
 
       <el-table-column
-        show-overflow-tooltip
+        
         prop="datatime"
         label="修改时间"
       ></el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="200">
+      <el-table-column  label="操作" width="200">
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>

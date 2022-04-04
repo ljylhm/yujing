@@ -14,7 +14,7 @@
       </el-col>
       <el-col :xs="20" :sm="12" :md="12" :lg="12" :xl="12">
         <div class="right-panel">
-          <vab-error-log />
+          <!-- <vab-error-log /> -->
           <vab-full-screen-bar @refresh="refreshRoute" />
           <!-- <vab-theme-bar class="hidden-xs-only" /> -->
           <vab-icon

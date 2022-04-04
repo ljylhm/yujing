@@ -44,25 +44,25 @@
       :height="height"
       :element-loading-text="elementLoadingText"
     >
-      <el-table-column show-overflow-tooltip label="序号" align="center">
+      <el-table-column  label="序号" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="name"
         label="用户名"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="phone"
         label="电话号码"
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="birthday"
         label="生日"
         align="center"
@@ -72,7 +72,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column show-overflow-tooltip label="角色" align="center">
+      <el-table-column  label="角色" align="center">
         <template #default="{ row }">
           <el-tag :type="tagList[row.type]">
             {{ statusList[row.type] }}
@@ -80,7 +80,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column show-overflow-tooltip label="操作" width="200">
+      <el-table-column  label="操作" width="200">
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>

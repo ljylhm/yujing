@@ -36,18 +36,18 @@
       :element-loading-text="elementLoadingText"
       @selection-change="setSelectRows"
     >
-      <el-table-column show-overflow-tooltip type="selection"></el-table-column>
+      <el-table-column  type="selection"></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="id"
         label="id"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         prop="permission"
         label="权限码"
       ></el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="200">
+      <el-table-column  label="操作" width="200">
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>

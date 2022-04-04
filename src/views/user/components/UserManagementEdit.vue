@@ -6,7 +6,7 @@
     @close="close"
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-      <el-form-item label="权限" prop="type">
+      <el-form-item label="权限" prop="type" v-if="title=='添加'">
         <el-radio-group v-model="form.type">
           <el-radio :label="1">学生</el-radio>
           <el-radio :label="2">家长</el-radio>
@@ -93,7 +93,7 @@
             {
               trigger: 'blur',
               validator: (rule, value, callback) => {
-                if (value === '' && this.form.type == '4') {
+                if (!value && this.form.type == '4') {
                   callback(new Error('请输入密码'))
                 } else {
                   callback()
@@ -117,7 +117,7 @@
             },
           ],
           phone: [
-            { required: true, trigger: 'blur', message: '请输入联系电话' },
+            { required: true, trigger: 'change', message: '请输入联系电话' },
             {
               pattern:
                 /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
@@ -168,8 +168,6 @@
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
             console.log('form', this.form)
-
-            const { msg } = await doEdit(this.form)
             const isEdit = this.title == '编辑'
             const apiName = isEdit ? 'update' : 'add'
             const result = await request({
@@ -185,7 +183,7 @@
               this.dialogFormVisible = false
               this.form = this.$options.data().form
             } else {
-              this.$baseMessage(result.msg || this.title + '失败', 'error')
+              // this.$baseMessage(result.msg || this.title + '失败', 'error')
             }
           } else {
             return false

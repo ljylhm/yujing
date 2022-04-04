@@ -56,7 +56,7 @@
       @sort-change="tableSortChange"
     >
       <el-table-column
-        show-overflow-tooltip
+        
         label="序号"
         width="95"
         align="center"
@@ -71,9 +71,10 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        
         label="确认审批人"
         prop="event_confirm_user"
+        width="220"
         align="center"
       >
         <template #default="{ row }">
@@ -81,7 +82,19 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        label="原课时"
+        prop="pre_real_time"
+        align="center"
+      >
+      </el-table-column>
+      <el-table-column
+        label="现课时"
+        prop="now_real_time"
+        align="center"
+      >
+      </el-table-column>
+      <el-table-column
+        
         label="课时状态"
         width="180px"
         align="center"
@@ -93,9 +106,16 @@
         </template>
       </el-table-column>
       <el-table-column
-        show-overflow-tooltip
+        label="调课时原因"
+        prop="description"
+        width="220"
+        align="center"
+      >
+      </el-table-column>
+      <el-table-column
+        
         label="类型"
-        width="180px"
+        width="120px"
         align="center"
       >
         <template #default="{ row }">
@@ -104,7 +124,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column show-overflow-tooltip label="操作" width="180px">
+      <el-table-column  label="操作" width="180px">
         <template #default="{ row }">
           <el-button
             v-if="row.status == 0"
