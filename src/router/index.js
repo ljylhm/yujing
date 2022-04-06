@@ -37,7 +37,7 @@ export const constantRoutes = [
     name: '404',
     component: () => import('@/views/404'),
     hidden: true,
-  }
+  },
 ]
 
 export const asyncRoutes = [
@@ -119,7 +119,7 @@ export const asyncRoutes = [
         name: 'Cubject',
         component: () => import('@/views/course/index'),
         meta: {
-          title: '课时管理',
+          title: '添加课时',
           icon: 'atlas',
           affix: true,
         },
@@ -136,7 +136,7 @@ export const asyncRoutes = [
         name: 'AllCourse',
         component: () => import('@/views/allCourse/index'),
         meta: {
-          title: '添加课时',
+          title: '所有课时管理',
           icon: 'calendar-day',
           affix: true,
         },
