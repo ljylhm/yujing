@@ -74,12 +74,7 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-      <el-table-column
-        
-        label="序号"
-        width="95"
-        align="center"
-      >
+      <el-table-column label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
@@ -91,7 +86,6 @@
         width="200"
       ></el-table-column>
       <el-table-column
-        
         label="学科名"
         prop="course_name"
         align="center"
@@ -117,48 +111,35 @@
         </template>
       </el-table-column>
       <el-table-column
-        
         label="学生"
         prop="student_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        
         label="老师"
         prop="teacher_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        
         label="实际课时"
         prop="real_time"
         align="center"
       ></el-table-column>
-      <el-table-column
-        
-        label="课时状态"
-        width="160px"
-        align="center"
-      >
+      <el-table-column label="课时状态" width="160px" align="center">
         <template #default="{ row }">
           <el-tag :type="tagStatusList[row.status].type">
             {{ tagStatusList[row.status].name }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column
-        
-        label="是否生效"
-        width="120px"
-        align="center"
-      >
+      <el-table-column label="是否生效" width="120px" align="center">
         <template #default="{ row }">
           <el-tag :type="validStatusList[row.is_valid].type">
             {{ validStatusList[row.is_valid].name }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column  label="操作" width="180px">
+      <el-table-column label="操作" width="180px">
         <template #default="{ row }">
           <el-button
             v-if="row.is_valid == 2"
@@ -280,7 +261,7 @@
             type: 'success',
           },
         },
-        exportUrl: ""
+        exportUrl: '',
       }
     },
     computed: {
