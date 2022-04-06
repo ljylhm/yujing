@@ -56,9 +56,6 @@
       }
     },
     created() {},
-    mounted() {
-      console.log('this', this)
-    },
     methods: {
       showEdit(row) {
         if (!row) {

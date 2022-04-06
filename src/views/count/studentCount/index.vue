@@ -1,7 +1,10 @@
 <template>
   <div class="table-container">
     <vab-query-form>
-      <vab-query-form-right-panel :span="24">
+      <vab-query-form-right-panel :span="1">
+         <el-button type="primary" @click="handleExport">导出</el-button>
+      </vab-query-form-right-panel>
+      <vab-query-form-right-panel :span="23">
         <el-form
           ref="form"
           :model="queryForm"
@@ -149,13 +152,17 @@
             name: '未通过',
             type: 'success',
           },
-        },
+        }
       }
     },
     computed: {
       height() {
         return this.$baseTableHeight()
       },
+      exportUrl(){
+        const { course_name, student_name } = this.queryForm
+        return `https://mastercenter.cn/api/surplus_export?course_name=${course_name}&student_name=${student_name}`
+      } 
     },
     async created() {
       this.fetchData()
@@ -246,6 +253,9 @@
       handleQuery() {
         this.queryForm.page = 1
         this.fetchData()
+      },
+      handleExport(){
+          window.open(this.exportUrl)
       },
       async fetchData() {
         this.listLoading = true

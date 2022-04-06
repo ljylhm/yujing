@@ -132,6 +132,23 @@ export const asyncRoutes = [
     redirect: 'noRedirect',
     children: [
       {
+        path: 'allCourse',
+        name: 'AllCourse',
+        component: () => import('@/views/allCourse/index'),
+        meta: {
+          title: '所有课时管理',
+          icon: 'calendar-day',
+          affix: true,
+        },
+      },
+    ],
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: 'noRedirect',
+    children: [
+      {
         path: 'schedule',
         name: 'schedule',
         component: () => import('@/views/schedule/index'),

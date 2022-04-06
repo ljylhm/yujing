@@ -1,7 +1,10 @@
 <template>
   <div class="table-container">
     <vab-query-form>
-      <vab-query-form-right-panel :span="24">
+      <vab-query-form-right-panel :span="1">
+         <el-button type="primary" @click="handleExport">导出</el-button>
+      </vab-query-form-right-panel>
+      <vab-query-form-right-panel :span="23">
         <el-form
           ref="form"
           :model="queryForm"
@@ -168,6 +171,16 @@
       height() {
         return this.$baseTableHeight()
       },
+      exportUrl(){
+        const { course_name, student_name } = this.queryForm
+        let start_time = ""
+        let end_time = ""
+         if (this.queryForm.date) {
+          start_time = this.queryForm.date[0].getTime() / 1000
+          end_time = this.queryForm.date[1].getTime() / 1000
+        }
+        return `https://mastercenter.cn/api/teacher_stat_export?course_name=${course_name}&student_name=${student_name}&start_time=${start_time}&end_time=${end_time}`
+      } 
     },
     async created() {
       this.fetchData()
@@ -257,11 +270,18 @@
       },
       handleQuery() {
         this.queryForm.page = 1
+        
         if (this.queryForm.date) {
           this.queryForm.start_time = this.queryForm.date[0].getTime() / 1000
           this.queryForm.end_time = this.queryForm.date[1].getTime() / 1000
+        }else{
+           this.queryForm.start_time = ""
+           this.queryForm.end_time = ""
         }
         this.fetchData()
+      },
+       handleExport(){
+        window.open(this.exportUrl)
       },
       async fetchData() {
         this.listLoading = true

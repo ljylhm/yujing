@@ -1,37 +1,41 @@
 <template>
   <div class="table-container">
     <vab-query-form>
-      <!--  -->
-      <vab-query-form-right-panel :span="1">
-         <el-button type="primary" @click="handleExport">导出</el-button>
-      </vab-query-form-right-panel>
-      <vab-query-form-right-panel :span="23">
+      <vab-query-form-right-panel :span="24">
         <el-form
           ref="form"
           :model="queryForm"
           :inline="true"
           @submit.native.prevent
         >
+          <el-form-item label="学科">
+            <el-input
+              v-model="queryForm.course_name"
+              placeholder="请输入学科查询"
+            />
+          </el-form-item>
           <el-form-item label="学生">
             <el-input
               v-model="queryForm.student_name"
               placeholder="请输入学生查询"
             />
           </el-form-item>
-          <el-form-item label="学科">
+          <el-form-item label="老师">
             <el-input
-              v-model="queryForm.course_name"
-              placeholder="请输学科查询"
+              v-model="queryForm.teacher_name"
+              placeholder="请输入学生查询"
             />
           </el-form-item>
           <el-form-item>
-            <el-date-picker
-              v-model="queryForm.date"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            ></el-date-picker>
+            <el-select v-model="queryForm.status" placeholder="请选择">
+              <el-option :label="'全部'" :value="''"></el-option>
+              <el-option
+                v-for="item in tagStatusList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button
@@ -51,39 +55,96 @@
       ref="tableSort"
       v-loading="listLoading"
       :data="list"
+      stripe
       :element-loading-text="elementLoadingText"
       :height="height"
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-      <el-table-column
-        
-        label="序号"
-        width="95"
-        align="center"
-      >
+      <el-table-column label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column
-        
+        label="备注"
+        prop="description"
+        align="center"
+        width="200"
+      ></el-table-column>
+      <el-table-column
         label="学科名"
         prop="course_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        
+        prop="start_time"
+        label="开始日期"
+        width="220"
+        align="center"
+      >
+        <template slot-scope="scope">
+          {{ format(scope.row.start_time * 1000) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="end_time"
+        label="结束日期"
+        width="220"
+        align="center"
+      >
+        <template slot-scope="scope">
+          {{ format(scope.row.end_time * 1000) }}
+        </template>
+      </el-table-column>
+      <el-table-column
         label="学生"
         prop="student_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        
-        label="完成课时"
+        label="老师"
+        prop="teacher_name"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        label="实际课时"
         prop="real_time"
         align="center"
       ></el-table-column>
+      <el-table-column label="课时状态" width="160px" align="center">
+        <template #default="{ row }">
+          <el-tag :type="tagStatusList[row.status].type">
+            {{ tagStatusList[row.status].name }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否生效" width="120px" align="center">
+        <template #default="{ row }">
+          <el-tag :type="validStatusList[row.is_valid].type">
+            {{ validStatusList[row.is_valid].name }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="180px">
+        <template #default="{ row }">
+          <el-button
+            v-if="row.is_valid == 2"
+            type="text"
+            @click="handleEdit(row)"
+          >
+            修改
+          </el-button>
+          <el-button v-if="row.status == 1" type="text" @click="checkSign(row)">
+            确认签到
+          </el-button>
+          <el-button type="text" @click="handleHistory(row)">
+            历史记录
+          </el-button>
+          <el-button type="text" @click="deleteCourse(row)">删除</el-button>
+          <!-- this.$refs['edit'].showEdit(row) -->
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       :background="background"
@@ -95,17 +156,22 @@
       @size-change="handleSizeChange"
     ></el-pagination>
     <table-edit ref="edit" @fetchData="fetchData"></table-edit>
+    <table-add ref="add" @fetchData="fetchData"></table-add>
   </div>
 </template>
 
 <script>
   import { getList, doDelete } from '@/api/table'
   import TableEdit from './components/TableEdit'
+  import TableAdd from './components/TableAdd'
   import request from '@/utils/request'
+  import { timeFormat } from '@/utils/date'
+
   export default {
     name: 'ComprehensiveTable',
     components: {
       TableEdit,
+      TableAdd,
     },
     filters: {
       statusFilter(status) {
@@ -133,9 +199,8 @@
           limit: 20,
           course_name: '',
           student_name: '',
-          start_time: '',
-          end_time: '',
-          date: '',
+          teacher_name: '',
+          status: '',
         },
         tagList: {
           1: {
@@ -152,38 +217,49 @@
         tagStatusList: {
           0: {
             id: 0,
-            name: '待确认',
+            name: '未签到',
             type: 'info',
           },
           1: {
             id: 1,
-            name: '已通过',
+            name: '签到待确认',
             type: 'warning',
           },
           2: {
             id: 2,
-            name: '未通过',
+            name: '签到已确认',
             type: 'success',
           },
         },
+        validStatusList: {
+          0: {
+            id: '0',
+            name: '待确认',
+            type: 'info',
+          },
+          1: {
+            id: '1',
+            name: '已失效',
+            type: 'warning',
+          },
+          2: {
+            id: '2',
+            name: '已生效',
+            type: 'success',
+          },
+        },
+        exportUrl: '',
       }
     },
     computed: {
       height() {
         return this.$baseTableHeight()
       },
-      exportUrl(){
-        const { course_name, student_name } = this.queryForm
-        let start_time = ""
-        let end_time = ""
-         if (this.queryForm.date) {
-          start_time = this.queryForm.date[0].getTime() / 1000
-          end_time = this.queryForm.date[1].getTime() / 1000
-        }
-        return `https://mastercenter.cn/api/student_stat_export?course_name=${course_name}&student_name=${student_name}&start_time=${start_time}&end_time=${end_time}`
-      } 
     },
     async created() {
+      const id = this.$router.currentRoute.params.id
+      this.queryForm.arranging_id = id
+      this.exportUrl = `https://mastercenter.cn/api/export?arranging_id=${id}`
       this.fetchData()
     },
     beforeDestroy() {},
@@ -197,7 +273,7 @@
             this.listLoading = true
             try {
               const result = await request({
-                url: 'https://mastercenter.cn/api/schedul/arranging_modify',
+                url: 'https://mastercenter.cn/api/student/class_add_check',
                 method: 'post',
                 data: {
                   id,
@@ -216,10 +292,46 @@
           }
         )
       },
-      toDetail(id) {
-        this.$router.push({
-          path: `/schedule_detail/${id}`,
+      checkSign(row) {
+        this.$baseConfirm('你确定要确认签到吗', null, async () => {
+          const result = await request({
+            url: 'https://mastercenter.cn/api/schedul/schedul_modify',
+            method: 'post',
+            data: {
+              id: row.id,
+              status: 2,
+            },
+          })
+          if (result && result.data) {
+            this.$baseMessage('已确认', 'success')
+          } else {
+            this.$baseMessage(result.msg || '确认' + '失败', 'error')
+          }
+          this.fetchData()
         })
+      },
+      handleHistory(row) {
+        this.$refs['edit'].showHistory(row)
+      },
+      deleteCourse(row) {
+        this.$baseConfirm('你确定要删除此项吗', null, async () => {
+          const result = await request({
+            url: 'https://mastercenter.cn/api/schedul/delete_course',
+            method: 'post',
+            data: {
+              id: row.id,
+            },
+          })
+          if (result && result.data) {
+            this.$baseMessage('删除成功', 'success')
+          } else {
+            this.$baseMessage(result.msg || '删除失败', 'error')
+          }
+          this.fetchData()
+        })
+      },
+      format(value) {
+        return timeFormat(value, 'yyyy-MM-dd hh:mm')
       },
       tableSortChange() {
         const imageList = []
@@ -232,13 +344,17 @@
         this.selectRows = val
       },
       handleAdd() {
-        this.$refs['edit'].showEdit()
+        const row = this.list[0]
+        const form = {
+          ...row,
+          type: 1,
+          arranging_id: this.queryForm.arranging_id,
+          start_time: '',
+        }
+        this.$refs['add'].showEdit(form)
       },
       handleEdit(row) {
         this.$refs['edit'].showEdit(row)
-      },
-      handleDescEdit(row) {
-        this.$refs['edit'].showDescEdit(row)
       },
       handleDelete(row) {
         if (row.id) {
@@ -269,22 +385,15 @@
         this.queryForm.page = val
         this.fetchData()
       },
-      handleExport(){
-        window.open(this.exportUrl)
-      },
       handleQuery() {
         this.queryForm.page = 1
-        if (this.queryForm.date) {
-          this.queryForm.start_time = this.queryForm.date[0].getTime() / 1000
-          this.queryForm.end_time = this.queryForm.date[1].getTime() / 1000
-        }
         this.fetchData()
       },
       async fetchData() {
         this.listLoading = true
         try {
           const result = await request({
-            url: 'https://mastercenter.cn/api/stat/student',
+            url: 'https://mastercenter.cn/api/schedul/list',
             method: 'post',
             data: {
               ...this.queryForm,

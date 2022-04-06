@@ -8,11 +8,7 @@
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="选择学生" filterable prop="student_id">
-          <el-select
-            v-model="form.student_id"
-            placeholder="请选择"
-            :disabled="title == '编辑'"
-          >
+          <el-select v-model="form.student_id" placeholder="请选择" disabled>
             <el-option
               v-for="item in studentList"
               :key="item.id"
@@ -26,7 +22,7 @@
             v-model="form.teacher_id"
             filterable
             placeholder="请选择"
-            :disabled="title == '编辑'"
+            disabled
           >
             <el-option
               v-for="item in teacherList"
@@ -37,11 +33,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="选择科目" prop="course_id">
-          <el-select
-            v-model="form.course_id"
-            placeholder="请选择"
-            :disabled="title == '编辑'"
-          >
+          <el-select v-model="form.course_id" placeholder="请选择" disabled>
             <el-option
               v-for="item in subjectList"
               :key="item.id"
@@ -51,11 +43,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="选择教室" prop="classroom_id">
-          <el-select
-            v-model="form.classroom_id"
-            placeholder="请选择"
-            :disabled="title == '编辑'"
-          >
+          <el-select v-model="form.classroom_id" placeholder="请选择">
             <el-option
               v-for="item in classRoomList"
               :key="item.id"
@@ -64,12 +52,12 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="时间类型" prop="type">
-          <el-radio-group v-model="form.type">
-            <el-radio :label="1">天</el-radio>
-            <el-radio :label="2">周</el-radio>
-          </el-radio-group>
-        </el-form-item>
+        <!-- <el-form-item label="时间类型" prop="type" >
+        <el-radio-group v-model="form.type">
+          <el-radio :label="1">天</el-radio>
+          <el-radio :label="2">周</el-radio>
+        </el-radio-group>
+      </el-form-item> -->
 
         <el-form-item v-if="form.type == 2" label="周类型" prop="week_type">
           <el-checkbox-group v-model="form.week_type" size="medium">
@@ -125,58 +113,6 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="close">取 消</el-button>
         <el-button type="primary" @click="save">确 定</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog
-      :title="'预览'"
-      :visible.sync="dialogConflictVisible"
-      width="800px"
-      custom-class="dialog-preview"
-      @close="close"
-    >
-      <el-table :data="previewData">
-        <el-table-column
-          prop="start_time"
-          label="开始日期"
-          width="300"
-          align="center"
-        >
-          <template slot-scope="scope">
-            {{ format(scope.row.start_time) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="end_time"
-          label="结束日期"
-          width="300"
-          align="center"
-        >
-          <template slot-scope="scope">
-            {{ format(scope.row.end_time) }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="handleDelete(scope.row)"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div style="text-align: right; padding: 10px 0px">
-        总课时：
-        <span style="color: red; font-weight: 600">
-          {{ form.predict_time }}
-        </span>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveMain">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -264,7 +200,7 @@
   import { timeFormat } from '@/utils/date'
 
   export default {
-    name: 'TableEdit',
+    name: 'TableAdd',
     data() {
       return {
         form: {
@@ -329,11 +265,10 @@
             },
           ],
         },
-        title: '',
+        title: '添加',
         dialogFormVisible: false,
         dialogPreviewVisible: false,
         dialogDescVisible: false,
-        dialogConflictVisible: false,
         studentList: [],
         teacherList: [],
         subjectList: [],
@@ -390,22 +325,26 @@
             address: '上海市普陀区金沙江路 1518 弄',
           },
         ],
-        conflictData: [],
       }
     },
     created() {},
+    mounted() {
+      console.log('this', this)
+    },
     methods: {
       showEdit(row) {
         this.getStudentList()
         this.getTeacherList()
         this.getSubjectList()
         this.getClassRoomList()
-        if (!row) {
-          this.title = '添加'
-        } else {
-          this.title = '编辑'
-          this.form = Object.assign({}, row)
+        this.form = {
+          ...this.form,
+          ...row,
         }
+        console.log('xxx', {
+          ...this.form,
+          ...row,
+        })
         this.dialogFormVisible = true
       },
       showDescEdit(row) {
@@ -532,13 +471,17 @@
             }
           })
 
+          const wrapForm = {
+            ...this.form,
+            schedul_time,
+            start_time: schedul_time[0].start_time,
+            end_time: schedul_time[0].end_time,
+          }
+
           const result = await request({
-            url: 'https://mastercenter.cn/api/schedul/add',
+            url: 'https://mastercenter.cn/api/schedul/add_course',
             method: 'post',
-            data: {
-              ...this.form,
-              schedul_time,
-            },
+            data: wrapForm,
           })
           if (result && result.data) {
             this.$baseMessage('添加成功', 'success')
