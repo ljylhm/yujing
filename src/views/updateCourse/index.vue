@@ -138,7 +138,7 @@
             <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column  label="操作" width="180px">
+      <el-table-column  label="操作" width="180px" fixed="right">
         <template #default="{ row }">
           <el-button type="text" v-if="row.status == 0" @click="checkVacation(row, 1)">确认</el-button>
           <el-button type="text" v-if="row.status == 0" @click="checkVacation(row, 2)">驳回</el-button>

@@ -136,7 +136,7 @@ export const asyncRoutes = [
         name: 'AllCourse',
         component: () => import('@/views/allCourse/index'),
         meta: {
-          title: '所有课时管理',
+          title: '添加课时',
           icon: 'calendar-day',
           affix: true,
         },

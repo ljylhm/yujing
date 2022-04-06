@@ -80,7 +80,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column  label="操作" width="200">
+      <el-table-column  label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>

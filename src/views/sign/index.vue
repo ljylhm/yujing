@@ -122,7 +122,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column  label="操作" width="180px">
+      <el-table-column  label="操作" width="180px" fixed="right">
         <template #default="{ row }">
           <el-button v-if="row.status == 1" type="text" @click="checkSign(row)">
             确认签到
