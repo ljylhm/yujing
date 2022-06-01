@@ -54,7 +54,7 @@
         </el-form-item>
         <el-form-item label="实际课时" prop="real_time">
           <div style="width: 100px">
-            <el-input v-model="form.real_time" min="0" type="number" />
+            <el-input v-model="form.real_time" min="0" step="0.5" type="number" />
           </div>
         </el-form-item>
       </el-form>

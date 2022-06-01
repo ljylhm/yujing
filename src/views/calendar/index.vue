@@ -1,96 +1,13 @@
 <template>
   <div class="table-container">
-    <vab-query-form>
-      <vab-query-form-left-panel>
-        <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
-          添加
-        </el-button>
-        <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
-          删除
-        </el-button> -->
-        <!-- <el-button type="primary" @click="testMessage">baseMessage</el-button>
-        <el-button type="primary" @click="testALert">baseAlert</el-button>
-        <el-button type="primary" @click="testConfirm">baseConfirm</el-button>
-        <el-button type="primary" @click="testNotify">baseNotify</el-button> -->
-      </vab-query-form-left-panel>
-      <vab-query-form-right-panel>
-        <el-form
-          ref="form"
-          :model="queryForm"
-          :inline="true"
-          @submit.native.prevent
-        >
-          <el-form-item>
-            <el-input v-model="queryForm.name" placeholder="请输入学科查询" />
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              icon="el-icon-search"
-              type="primary"
-              native-type="submit"
-              @click="handleQuery"
-            >
-              查询
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </vab-query-form-right-panel>
-    </vab-query-form>
-
-    <el-table
-      ref="tableSort"
-      v-loading="listLoading"
-      :data="list"
-      :element-loading-text="elementLoadingText"
-      :height="height"
-      @selection-change="setSelectRows"
-      @sort-change="tableSortChange"
-    >
-      <el-table-column
-        
-        label="序号"
-        width="95"
-        align="center"
-      >
-        <template #default="scope">
-          {{ scope.$index + 1 }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        
-        label="学科名"
-        prop="name"
-        align="center"
-      ></el-table-column>
-      <!-- <el-table-column
-        
-        label="学科描述"
-        prop="description"
-        align="center"
-      ></el-table-column> -->
-      <!-- <el-table-column
-        
-        label="创建时间"
-        prop="created_at"
-        width="200"
-      ></el-table-column> -->
-      <el-table-column  label="操作" width="180px" fixed="right">
-        <template #default="{ row }">
-          <el-button type="text" @click="handleEdit(row)">编辑</el-button>
-          <el-button type="text" @click="handleDelete(row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      :background="background"
-      :current-page="queryForm.page"
-      :layout="layout"
-      :page-size="queryForm.limit"
-      :total="total"
-      @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"
-    ></el-pagination>
-    <table-edit ref="edit" @fetchData="fetchData"></table-edit>
+    <el-calendar v-model="value">
+      <template slot="dateCell" slot-scope="{ date, data }">
+        <p :class="data.isSelected ? 'is-selected' : ''">
+          {{ data.day.split('-').slice(1).join('-') }}
+          {{ data.isSelected ? '✔️' : '' }}
+        </p>
+      </template>
+    </el-calendar>
   </div>
 </template>
 
@@ -124,10 +41,43 @@
         background: true,
         selectRows: '',
         elementLoadingText: '正在加载...',
+        value: new Date(),
         queryForm: {
           page: 1,
           limit: 20,
-          name: '',
+          course_name: '',
+          student_name: '',
+          teacher_name: '',
+          status: '',
+        },
+        tagList: {
+          1: {
+            id: 1,
+            name: '天',
+            type: 'info',
+          },
+          2: {
+            id: 2,
+            name: '周',
+            type: 'warning',
+          },
+        },
+        tagStatusList: {
+          0: {
+            id: 0,
+            name: '待确认',
+            type: 'info',
+          },
+          1: {
+            id: 1,
+            name: '已通过',
+            type: 'warning',
+          },
+          2: {
+            id: 2,
+            name: '未通过',
+            type: 'success',
+          },
         },
       }
     },
@@ -142,6 +92,38 @@
     beforeDestroy() {},
     mounted() {},
     methods: {
+      async checkStatus(id, status) {
+        this.$baseConfirm(
+          `你确定要${status == 1 ? '通过' : '不通过'}当前项吗`,
+          null,
+          async () => {
+            this.listLoading = true
+            try {
+              const result = await request({
+                url: 'https://mastercenter.cn/api/schedul/arranging_modify',
+                method: 'post',
+                data: {
+                  id,
+                  status,
+                },
+              })
+              this.listLoading = false
+              if (result && result.data) {
+                this.$baseMessage('完成审核', 'success')
+                this.fetchData()
+              }
+            } catch (error) {
+              this.$baseMessage(result.msg || '网络异常', 'error')
+              this.listLoading = false
+            }
+          }
+        )
+      },
+      toDetail(id) {
+        this.$router.push({
+          path: `/schedule_detail/${id}`,
+        })
+      },
       tableSortChange() {
         const imageList = []
         this.$refs.tableSort.tableData.forEach((item, index) => {
@@ -157,6 +139,9 @@
       },
       handleEdit(row) {
         this.$refs['edit'].showEdit(row)
+      },
+      handleDescEdit(row) {
+        this.$refs['edit'].showDescEdit(row)
       },
       handleDelete(row) {
         if (row.id) {
@@ -195,7 +180,7 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: 'https://mastercenter.cn/api/course/list',
+            url: 'https://mastercenter.cn/api/schedul/arranging_list',
             method: 'post',
             data: {
               ...this.queryForm,

@@ -34,7 +34,7 @@
       <el-form-item label="手机" prop="phone">
         <el-input v-model.trim="form.phone" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="生日" prop="birthday">
+      <el-form-item v-if="form.type == 1" label="生日" prop="birthday">
         <el-date-picker
           v-model.trim="form.birthday"
           type="date"
@@ -51,8 +51,11 @@
           autocomplete="off"
         ></el-input>
       </el-form-item>
-      <el-form-item label="学校" prop="school">
+      <el-form-item v-if="form.type == 1" label="学校" prop="school">
         <el-input v-model.trim="form.school" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item v-if="form.type == 1" label="年级" prop="grade">
+        <el-input v-model.trim="form.grade" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item v-if="form.type == 4" label="密码" prop="password">
         <el-input
@@ -85,10 +88,55 @@
           school: '',
           description: '',
           type: 1,
+          grade: "",
           parent_id: '',
         },
         rules: {
           name: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
+          birthday: [{ required: true, trigger: 'blur', message: '请选择生日' }],
+          school: [{ required: true, trigger: 'blur', message: '请输入学校' }],
+          grade: [{ required: true, trigger: 'blur', message: '请输入年级' }],
+          password: [
+            {
+              trigger: 'blur',
+              validator: (rule, value, callback) => {
+                if (!value && this.form.type == '4') {
+                  callback(new Error('请输入密码'))
+                } else {
+                  callback()
+                }
+              },
+            },
+          ],
+          parent_id: [
+            {
+              required: true,
+              trigger: 'change',
+              validator: (rule, value, callback) => {
+                if (value === '' && this.form.type == '1') {
+                  callback(
+                    new Error('请选择一个家长，若无对应家长，请先为其添加')
+                  )
+                } else {
+                  callback()
+                }
+              },
+            },
+          ],
+          phone: [
+            { required: true, trigger: 'change', message: '请输入联系电话' },
+            {
+              pattern:
+                /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
+              message: '请输入正确的联系电话',
+            },
+          ],
+          type: [{ required: true, trigger: 'blur', message: '请选择权限' }],
+        },
+        studedntRules: {
+          name: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
+          birthday: [{ required: true, trigger: 'blur', message: '请选择生日' }],
+          school: [{ required: true, trigger: 'blur', message: '请输入学校' }],
           password: [
             {
               trigger: 'blur',

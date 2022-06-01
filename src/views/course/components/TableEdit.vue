@@ -28,7 +28,7 @@
       </el-form-item>
       <el-form-item label="课时数量" prop="name" >
         <div style="width:100px">
-            <el-input v-model="form.num_class" min=1 type="number" />
+            <el-input v-model="form.num_class" min=1 step="0.5" type="number" />
         </div>
       </el-form-item>
     </el-form>

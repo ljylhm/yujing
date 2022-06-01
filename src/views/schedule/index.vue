@@ -21,26 +21,32 @@
           @submit.native.prevent
         >
           <el-form-item label="学科">
-            <el-input v-model="queryForm.course_name" placeholder="请输入学科查询" />
+            <el-input
+              v-model="queryForm.course_name"
+              placeholder="请输入学科查询"
+            />
           </el-form-item>
           <el-form-item label="学生">
-            <el-input v-model="queryForm.student_name" placeholder="请输入学生查询" />
+            <el-input
+              v-model="queryForm.student_name"
+              placeholder="请输入学生查询"
+            />
           </el-form-item>
           <el-form-item label="老师">
-            <el-input v-model="queryForm.teacher_name" placeholder="请输入学生查询" />
+            <el-input
+              v-model="queryForm.teacher_name"
+              placeholder="请输入学生查询"
+            />
           </el-form-item>
           <el-form-item>
             <el-select v-model="queryForm.status" placeholder="请选择">
-              <el-option
-                :label="'全部'"
-                :value="''">
-              </el-option>
+              <el-option :label="'全部'" :value="''"></el-option>
               <el-option
                 v-for="item in tagStatusList"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id">
-              </el-option>
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -66,45 +72,32 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-
-      <el-table-column  label="序号" width="95" align="center">
+      <el-table-column label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column
-        
-        label="备注"
-        prop="description"
-        align="center"
-        width="200"
-      ></el-table-column>
-      <el-table-column
-        
         label="学科名"
         prop="course_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        
         label="教室"
         prop="classroom_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        
         label="学生"
         prop="student_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        
         label="老师"
         prop="teacher_name"
         align="center"
       ></el-table-column>
       <el-table-column
-        
         label="预估课时"
         prop="predict_time"
         align="center"
@@ -115,23 +108,47 @@
         prop="real_time"
         align="center"
       ></el-table-column> -->
-      <el-table-column  label="课时类型" width="180px" align="center">
+      <el-table-column label="课时类型" width="180px" align="center">
         <template #default="{ row }">
-            <el-tag :type="tagList[row.type].type">{{tagList[row.type].name}}</el-tag>
+          <el-tag :type="tagList[row.type].type">
+            {{ tagList[row.type].name }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column  label="课时状态" width="180px" align="center">
+      <el-table-column label="课时状态" width="180px" align="center">
         <template #default="{ row }">
-            <el-tag :type="tagStatusList[row.status].type">{{tagStatusList[row.status].name}}</el-tag>
+          <el-tag :type="tagStatusList[row.status].type">
+            {{ tagStatusList[row.status].name }}
+          </el-tag>
         </template>
       </el-table-column>
+      <el-table-column
+        label="备注"
+        prop="description"
+        align="center"
+        width="200"
+      ></el-table-column>
       <el-table-column label="操作" width="180px" fixed="right">
         <template #default="{ row }">
-          <el-button type="text" @click="handleDescEdit(row)">修改备注</el-button>
+          <el-button type="text" @click="handleDescEdit(row)">
+            修改备注
+          </el-button>
           <el-button type="text" @click="toDetail(row.id)">查看明细</el-button>
-          <br/>
-          <el-button type="text" v-if="row.status == 0" @click="checkStatus(row.id, 1)">通过</el-button>
-          <el-button type="text" v-if="row.status == 0" @click="checkStatus(row.id, 2)">不通过</el-button>
+          <br />
+          <el-button
+            type="text"
+            v-if="row.status == 0"
+            @click="checkStatus(row.id, 1)"
+          >
+            通过
+          </el-button>
+          <el-button
+            type="text"
+            v-if="row.status == 0"
+            @click="checkStatus(row.id, 2)"
+          >
+            不通过
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -144,7 +161,7 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     ></el-pagination>
-    <table-edit ref="edit" v-on:fetchData='fetchData'></table-edit>
+    <table-edit ref="edit" v-on:fetchData="fetchData"></table-edit>
   </div>
 </template>
 
@@ -182,39 +199,39 @@
           page: 1,
           limit: 20,
           course_name: '',
-          student_name: "",
-          teacher_name: "",
-          status: ""
+          student_name: '',
+          teacher_name: '',
+          status: '',
         },
-        tagList:{
-          "1": {
+        tagList: {
+          1: {
             id: 1,
-            name: "天",
-            type: "info"
+            name: '天',
+            type: 'info',
           },
-         "2": {
+          2: {
             id: 2,
-            name: "周",
-            type: "warning"
-          }
+            name: '周',
+            type: 'warning',
+          },
         },
-        tagStatusList:{
-          "0": {
+        tagStatusList: {
+          0: {
             id: 0,
-            name: "待确认",
-            type: "info"
+            name: '待确认',
+            type: 'info',
           },
-         "1": {
+          1: {
             id: 1,
-            name: "已通过",
-            type: "warning"
+            name: '已通过',
+            type: 'warning',
           },
-          "2":{
+          2: {
             id: 2,
-            name: "未通过",
-            type: "success"
-          }
-        }
+            name: '未通过',
+            type: 'success',
+          },
+        },
       }
     },
     computed: {
@@ -228,34 +245,36 @@
     beforeDestroy() {},
     mounted() {},
     methods: {
-      async checkStatus(id, status){
-
-        this.$baseConfirm(`你确定要${status == 1 ? '通过' : '不通过'}当前项吗`, null, async () => {
-
-             this.listLoading = true
-             try {
-                const result = await request({
-                  url: "https://mastercenter.cn/api/schedul/arranging_modify",
-                  method: "post",
-                  data: {
-                    id,
-                    status
-                  }
-                })
-                this.listLoading = false
-                if(result && result.data){
-                   this.$baseMessage("完成审核", 'success')
-                   this.fetchData()
-                }
-              } catch (error) {
-                 this.$baseMessage(result.msg || '网络异常', 'error')
-                 this.listLoading = false
+      async checkStatus(id, status) {
+        this.$baseConfirm(
+          `你确定要${status == 1 ? '通过' : '不通过'}当前项吗`,
+          null,
+          async () => {
+            this.listLoading = true
+            try {
+              const result = await request({
+                url: 'https://mastercenter.cn/api/schedul/arranging_modify',
+                method: 'post',
+                data: {
+                  id,
+                  status,
+                },
+              })
+              this.listLoading = false
+              if (result && result.data) {
+                this.$baseMessage('完成审核', 'success')
+                this.fetchData()
               }
-        })
+            } catch (error) {
+              this.$baseMessage(result.msg || '网络异常', 'error')
+              this.listLoading = false
+            }
+          }
+        )
       },
-      toDetail(id){
+      toDetail(id) {
         this.$router.push({
-          path: `/schedule_detail/${id}`
+          path: `/schedule_detail/${id}`,
         })
       },
       tableSortChange() {
@@ -274,7 +293,7 @@
       handleEdit(row) {
         this.$refs['edit'].showEdit(row)
       },
-      handleDescEdit(row){
+      handleDescEdit(row) {
         this.$refs['edit'].showDescEdit(row)
       },
       handleDelete(row) {
@@ -314,19 +333,17 @@
         this.listLoading = true
         try {
           const result = await request({
-            url: "https://mastercenter.cn/api/schedul/arranging_list",
-            method: "post",
+            url: 'https://mastercenter.cn/api/schedul/arranging_list',
+            method: 'post',
             data: {
-              ...this.queryForm
-            }
+              ...this.queryForm,
+            },
           })
-          if(result && result.data && result.data.list){
+          if (result && result.data && result.data.list) {
             this.list = result.data.list
             this.total = result.data.total
           }
-        } catch (error) {
-
-        }
+        } catch (error) {}
         this.listLoading = false
       },
       testMessage() {

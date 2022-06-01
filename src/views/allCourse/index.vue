@@ -67,12 +67,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="备注"
-        prop="description"
-        align="center"
-        width="200"
-      ></el-table-column>
-      <el-table-column
         label="学科名"
         prop="course_name"
         align="center"
@@ -126,6 +120,12 @@
           </el-tag>
         </template>
       </el-table-column>
+       <el-table-column
+        label="备注"
+        prop="description"
+        align="center"
+        width="200"
+      ></el-table-column>
       <el-table-column label="操作" width="180px" fixed="right">
         <template #default="{ row }">
           <el-button

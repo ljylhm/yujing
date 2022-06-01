@@ -101,7 +101,12 @@
         </el-form-item>
         <el-form-item label="课程数量" prop="class_num">
           <div style="width: 100px">
-            <el-input v-model="form.class_num" min="1" type="number" />
+            <el-input
+              v-model="form.class_num"
+              min="1"
+              type="number"
+              step="0.5"
+            />
           </div>
         </el-form-item>
         <el-form-item label="课程备注" prop="description">

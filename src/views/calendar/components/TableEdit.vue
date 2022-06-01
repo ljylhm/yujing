@@ -68,15 +68,10 @@
           <el-radio-group v-model="form.type">
             <el-radio :label="1">天</el-radio>
             <el-radio :label="2">周</el-radio>
-            <el-radio :label="3">双周</el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item
-          label="周类型"
-          prop="week_type"
-          v-if="form.type == 2 || form.type == 3"
-        >
+        <el-form-item label="周类型" prop="week_type" v-if="form.type == 2">
           <el-checkbox-group v-model="form.week_type" size="medium">
             <el-checkbox
               v-for="city in weekList"
@@ -97,7 +92,7 @@
           ></el-date-picker>
 
           <el-date-picker
-            v-if="form.type == 2 || form.type == 3"
+            v-if="form.type == 2"
             v-model="form.start_date"
             type="week"
             format="yyyy 第 WW 周"
@@ -118,11 +113,7 @@
         </el-form-item>
         <el-form-item label="课程数量" prop="class_num">
           <div style="width: 100px">
-            <el-input
-              v-model="form.class_num"
-              min="1"
-              type="number"
-            />
+            <el-input v-model="form.class_num" min="1" type="number" step="0.5" />
           </div>
         </el-form-item>
         <el-form-item label="课程备注" prop="description">
@@ -539,7 +530,7 @@
               schedul_time,
             },
           })
-          if (result && result.code == '1007') {
+          if (result && result.code == '1002') {
             this.conflictData = result.data
             this.dialogConflictVisible = true
             return
@@ -551,7 +542,7 @@
             this.dialogPreviewVisible = false
             this.form = this.$options.data().form
           } else {
-            // this.$baseMessage(result.msg || this.title + '失败', 'error')
+            this.$baseMessage(result.msg || this.title + '失败', 'error')
           }
         })
       },
@@ -560,24 +551,17 @@
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
             const schedul_time = []
-            const ONE_DAY_TIME = 1000 * 60 * 60 * 24
-            const ONE_WEEK_TIME = ONE_DAY_TIME * 7
-            const ONE_HOUR_TIME = 1000 * 60 * 60
 
             // 判断是什么类型
             const { type, start_date, start_time, class_num } = this.form
             const [begin, end] = start_time
+
             const [beginHour, beginMinute] = this.getHourAndMin(begin)
             const [endHour, endMinute] = this.getHourAndMin(end)
             const [year, month, day] = this.getYearAndMonthAndDay(start_date)
 
-            // const hourClassNum =
-            //   (wrapEnDayDate - wrapStartDayDate) / ONE_HOUR_TIME
-            // console.log('hourClassNum', wrapEnDayDate, wrapStartDayDate, hourClassNum)
-            // if (class_num % hourClassNum !== 0) {
-            //   this.$baseMessage('课程数量和课程时间冲突，请重填', 'error')
-            //   return
-            // }
+            const ONE_DAY_TIME = 1000 * 60 * 60 * 24
+            const ONE_WEEK_TIME = ONE_DAY_TIME * 7
 
             if (type == 1) {
               // 天
@@ -609,6 +593,7 @@
                   (weekTypeItem) => item.name == weekTypeItem
                 )
               })
+
               const wrapStartDate =
                 new Date(start_date).getTime() - ONE_DAY_TIME
 
@@ -636,9 +621,7 @@
                   schedul_time.push([startDayDate, enDayDate])
                   if (++count >= this.form.class_num) return
                 }
-
-                const t = type == 2 ? ONE_WEEK_TIME : ONE_WEEK_TIME * 2
-                fn(startTime + t)
+                fn(startTime + ONE_WEEK_TIME)
               }
               fn(wrapStartDate)
             }

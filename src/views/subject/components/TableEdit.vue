@@ -13,7 +13,7 @@
           placeholder="请输入学科名字"
         ></el-input>
       </el-form-item>
-      <el-form-item label="描述" prop="description">
+      <!-- <el-form-item label="描述" prop="description">
         <el-input
           v-model.trim="form.description"
           type="textarea"
@@ -21,7 +21,7 @@
           autocomplete="off"
           placeholder="请输入学科描述"
         ></el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="close">取 消</el-button>
