@@ -235,7 +235,7 @@
     },
     created() {},
     mounted() {
-      console.log('this', this)
+      
     },
     methods: {
       showEdit(row) {
@@ -295,7 +295,7 @@
         return date.split(':').map((item) => Number(item))
       },
       getYearAndMonthAndDay(date) {
-        console.log('date', date)
+        
         return [date.getFullYear(), date.getMonth(), date.getDate()]
       },
       // 获取学生的信息
@@ -393,7 +393,7 @@
       },
 
       save() {
-        console.log('form', this.form)
+        
         this.$refs['form'].validate(async (valid) => {
           const { id, description, real_time } = this.form
           if (valid) {

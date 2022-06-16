@@ -46,18 +46,12 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
-      <el-table-column
-        
-        label="序号"
-        width="95"
-        align="center"
-      >
+      <el-table-column label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
       <el-table-column
-        
         label="学科名"
         prop="name"
         align="center"
@@ -74,7 +68,7 @@
         prop="created_at"
         width="200"
       ></el-table-column> -->
-      <el-table-column  label="操作" width="180px" fixed="right">
+      <el-table-column label="操作" width="180px" fixed="right">
         <template #default="{ row }">
           <el-button type="text" @click="handleEdit(row)">编辑</el-button>
           <el-button type="text" @click="handleDelete(row)">删除</el-button>
