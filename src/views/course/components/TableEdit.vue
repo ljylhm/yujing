@@ -7,28 +7,37 @@
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px">
       <el-form-item label="选择学生" prop="name">
-        <el-select v-model="form.student_id" filterable  placeholder="请选择" :disabled="title == '编辑'">
-           <el-option
+        <el-select
+          v-model="form.student_id"
+          filterable
+          placeholder="请选择"
+          :disabled="title == '编辑'"
+        >
+          <el-option
             v-for="item in studentList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="选择科目" prop="name">
-        <el-select v-model="form.course_id" placeholder="请选择" :disabled="title == '编辑'">
-           <el-option
+        <el-select
+          v-model="form.course_id"
+          placeholder="请选择"
+          :disabled="title == '编辑'"
+        >
+          <el-option
             v-for="item in subjectList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="课时数量" prop="name" >
-        <div style="width:100px">
-            <el-input v-model="form.num_class" min=1 step="0.5" type="number" />
+      <el-form-item label="课时数量" prop="name">
+        <div style="width: 100px">
+          <el-input v-model="form.num_class" min="1" step="0.5" type="number" />
         </div>
       </el-form-item>
     </el-form>
@@ -49,26 +58,36 @@
     data() {
       return {
         form: {
-          student_id: "",
-          course_id: "",
+          student_id: '',
+          course_id: '',
           num_class: 1,
           name: '',
           description: '',
         },
         rules: {
-          student_id: [{ required: true, trigger: 'change', message: '请至少选择一个学生' }],
-          course_id: [{ required: true, trigger: 'change', message: '请至少选择一个学科' }],
+          student_id: [
+            {
+              required: true,
+              trigger: 'change',
+              message: '请至少选择一个学生',
+            },
+          ],
+          course_id: [
+            {
+              required: true,
+              trigger: 'change',
+              message: '请至少选择一个学科',
+            },
+          ],
         },
         title: '',
         dialogFormVisible: false,
         studentList: [],
-        subjectList: []
+        subjectList: [],
       }
     },
     created() {},
-    mounted(){
-      console.log("this", this)
-    },
+    mounted() {},
     methods: {
       showEdit(row) {
         this.getStudentList()
@@ -88,53 +107,53 @@
         this.$emit('fetchData')
       },
       // 获取学生的信息
-      async getStudentList(){
-         const result = await request({
-              url: "https://mastercenter.cn/api/user/get_type_user_list",
-              method: "post",
-              data: {
-                page: 1,
-                limit: 1000,
-                type: "1"
-              }
-          })
-          if(result && result.data){
-              this.studentList = result.data.list
-          }
+      async getStudentList() {
+        const result = await request({
+          url: 'https://mastercenter.cn/api/user/get_type_user_list',
+          method: 'post',
+          data: {
+            page: 1,
+            limit: 1000,
+            type: '1',
+          },
+        })
+        if (result && result.data) {
+          this.studentList = result.data.list
+        }
       },
       // 获取科目的信息
-      async getSubjectList(){
-         const result = await request({
-              url: "https://mastercenter.cn/api/course/list",
-              method: "post",
-              data: {
-                page: 1,
-                limit: 1000
-              }
-          })
-          if(result && result.data){
-              this.subjectList = result.data.list
-          }
+      async getSubjectList() {
+        const result = await request({
+          url: 'https://mastercenter.cn/api/course/list',
+          method: 'post',
+          data: {
+            page: 1,
+            limit: 1000,
+          },
+        })
+        if (result && result.data) {
+          this.subjectList = result.data.list
+        }
       },
       save() {
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
-            const isEdit = this.title == "编辑"
-            const apiName = isEdit ? "update" : "class_add"
+            const isEdit = this.title == '编辑'
+            const apiName = isEdit ? 'update' : 'class_add'
             const result = await request({
-              url: "https://mastercenter.cn/api/student/" + apiName,
-              method: "post",
+              url: 'https://mastercenter.cn/api/student/' + apiName,
+              method: 'post',
               data: {
-                ...this.form
-              }
+                ...this.form,
+              },
             })
-            if(result && result.data){
-              this.$baseMessage(this.title + "成功", 'success')
+            if (result && result.data) {
+              this.$baseMessage(this.title + '成功', 'success')
               this.$refs['form'].resetFields()
               this.dialogFormVisible = false
               this.form = this.$options.data().form
-            }else{
-              this.$baseMessage(result.msg ||  this.title + "失败", 'error')
+            } else {
+              this.$baseMessage(result.msg || this.title + '失败', 'error')
             }
           } else {
             return false

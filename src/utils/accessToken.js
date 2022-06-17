@@ -57,3 +57,6 @@ export function removeAccessToken() {
     return localStorage.removeItem(tokenTableName)
   }
 }
+
+const c = false
+export const a = c ? '1' : '2'

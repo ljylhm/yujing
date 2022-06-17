@@ -333,9 +333,6 @@
       }
     },
     created() {},
-    mounted() {
-      console.log('this', this)
-    },
     methods: {
       showEdit(row) {
         this.getStudentList()
@@ -346,10 +343,6 @@
           ...this.form,
           ...row,
         }
-        console.log('xxx', {
-          ...this.form,
-          ...row,
-        })
         this.dialogFormVisible = true
       },
       showDescEdit(row) {
@@ -375,7 +368,6 @@
         return date.split(':').map((item) => Number(item))
       },
       getYearAndMonthAndDay(date) {
-        console.log('date', date)
         return [date.getFullYear(), date.getMonth(), date.getDate()]
       },
       // 获取学生的信息
@@ -606,7 +598,6 @@
             ...this.descForm,
           },
         })
-        console.log('result', result)
         if (result && result.data) {
           this.$baseMessage('修改完成', 'success')
           this.$refs['descForm'].resetFields()

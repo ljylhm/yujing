@@ -214,6 +214,11 @@
             name: '周',
             type: 'warning',
           },
+          3: {
+            id: 3,
+            name: '双周',
+            type: 'success',
+          },
         },
         tagStatusList: {
           0: {

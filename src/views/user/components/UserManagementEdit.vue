@@ -215,7 +215,7 @@
       save() {
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
-            console.log('form', this.form)
+            
             const isEdit = this.title == '编辑'
             const apiName = isEdit ? 'update' : 'add'
             const result = await request({
