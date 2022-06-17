@@ -160,23 +160,23 @@ export const asyncRoutes = [
       },
     ],
   },
-  {
-    path: '/',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: 'calendar',
-        name: 'calendar',
-        component: () => import('@/views/calendar/index'),
-        meta: {
-          title: '课程查看',
-          icon: 'calendar-alt',
-          affix: true,
-        },
-      },
-    ],
-  },
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   children: [
+  //     {
+  //       path: 'calendar',
+  //       name: 'calendar',
+  //       component: () => import('@/views/calendar/index'),
+  //       meta: {
+  //         title: '课程查看',
+  //         icon: 'calendar-alt',
+  //         affix: true,
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: '/',
     component: Layout,
