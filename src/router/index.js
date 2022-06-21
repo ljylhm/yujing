@@ -160,23 +160,23 @@ export const asyncRoutes = [
       },
     ],
   },
-  {
-    path: '/',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: 'calendar',
-        name: 'calendar',
-        component: () => import('@/views/calendar/index'),
-        meta: {
-          title: '课程查看',
-          icon: 'calendar-alt',
-          affix: true,
-        },
-      },
-    ],
-  },
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   children: [
+  //     {
+  //       path: 'calendar',
+  //       name: 'calendar',
+  //       component: () => import('@/views/calendar/index'),
+  //       meta: {
+  //         title: '课程查看',
+  //         icon: 'calendar-alt',
+  //         affix: true,
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: '/',
     component: Layout,
@@ -203,28 +203,17 @@ export const asyncRoutes = [
     meta: { title: '常用管理', icon: 'book-open' },
     children: [
       {
-        path: '/sign',
-        name: 'sign',
-        component: () => import('@/views/sign/index'),
+        path: '/birthday',
+        name: 'birthday',
+        component: () => import('@/views/birthday/index'),
         meta: {
-          title: '签到管理',
+          title: '生日管理',
           icon: 'atom',
-          affix: true,
-        },
-      },
-      {
-        path: '/vacation',
-        name: 'vacation',
-        component: () => import('@/views/vacation/index'),
-        meta: {
-          title: '请假管理',
-          icon: 'envelope',
           affix: true,
         },
       },
     ],
   },
-
   {
     path: '/review',
     component: Layout,
@@ -248,6 +237,26 @@ export const asyncRoutes = [
         meta: {
           title: '调课审批',
           icon: 'clipboard',
+          affix: true,
+        },
+      },
+      {
+        path: '/sign',
+        name: 'sign',
+        component: () => import('@/views/sign/index'),
+        meta: {
+          title: '签到审批',
+          icon: 'atom',
+          affix: true,
+        },
+      },
+      {
+        path: '/vacation',
+        name: 'vacation',
+        component: () => import('@/views/vacation/index'),
+        meta: {
+          title: '请假审批',
+          icon: 'envelope',
           affix: true,
         },
       },

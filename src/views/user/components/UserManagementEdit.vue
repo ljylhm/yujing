@@ -11,7 +11,7 @@
           <el-radio :label="1">学生</el-radio>
           <el-radio :label="2">家长</el-radio>
           <el-radio :label="3">老师</el-radio>
-          <el-radio :label="4">管理员</el-radio>
+          <el-radio :label="4" v-if="isAdmin">管理员</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item v-if="form.type == 1" label="家长名单" prop="parent_id">
@@ -73,11 +73,19 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import { doEdit } from '@/api/userManagement'
   import request from '@/utils/request'
 
   export default {
     name: 'UserManagementEdit',
+    computed: {
+      ...mapGetters({
+        avatar: 'user/avatar',
+        username: 'user/username',
+        isAdmin: 'user/isAdmin',
+      }),
+    },
     data() {
       return {
         form: {
