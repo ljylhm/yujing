@@ -11,6 +11,7 @@
           <el-select
             v-model="form.student_id"
             placeholder="请选择"
+            @change="onStudentChange($event)"
             :disabled="title == '编辑'"
           >
             <el-option
@@ -21,6 +22,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <div v-if="remainCourse">{{remainCourse}}</div>
         <el-form-item label="选择老师" prop="teacher_id">
           <el-select
             v-model="form.teacher_id"
@@ -105,8 +107,7 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="首节课时间" prop="start_time">
-          <el-time-picker
-            is-range
+          <!-- <el-time-picker
             v-model="form.start_time"
             range-separator="至"
             start-placeholder="开始时间"
@@ -114,15 +115,30 @@
             placeholder="选择时间范围"
             format="HH:mm"
             value-format="HH:mm"
-          ></el-time-picker>
+          ></el-time-picker> -->
+          <el-time-select
+            style="margin-right: 20px"
+            v-model="form.start_time"
+            :picker-options="{
+              start: '00:00',
+              step: '00:30',
+              end: '23:59',
+            }"
+            placeholder="开始时间"
+          />
+          <el-time-select
+            v-model="form.end_time"
+            :picker-options="{
+              start: '00:00',
+              step: '00:30',
+              end: '23:59',
+            }"
+            placeholder="结束时间"
+          />
         </el-form-item>
         <el-form-item label="课程数量" prop="class_num">
           <div style="width: 100px">
-            <el-input
-              v-model="form.class_num"
-              min="1"
-              type="number"
-            />
+            <el-input v-model="form.class_num" min="1" type="number" />
           </div>
         </el-form-item>
         <el-form-item label="课程备注" prop="description">
@@ -275,6 +291,8 @@
           description: '',
           start_date: '',
           start_time: '',
+          end_time: '',
+          time_arr: [],
           week_type: [],
           schedul_time: [],
           class_num: 1,
@@ -314,9 +332,12 @@
           start_date: [
             { required: true, trigger: 'change', message: '请选择开始日期' },
           ],
-          start_time: [
-            { required: true, trigger: 'change', message: '请选择开始时间' },
-          ],
+          // start_time: [
+          //   { required: true, trigger: 'change', message: '请选择开始时间' },
+          // ],
+          // end_time: [
+          //   { required: true, trigger: 'change', message: '请选择结束时间' },
+          // ],
           week_type: [
             {
               required: true,
@@ -387,13 +408,24 @@
           },
         ],
         conflictData: [],
+        remainCourse: "",
       }
     },
     created() {},
-    mounted() {
-      
-    },
+    mounted() {},
     methods: {
+      async onStudentChange(value) {
+        const result = await request({
+          url: 'https://mastercenter.cn/api/user/get_schdule ',
+          method: 'post',
+          data: {
+            student_id: value,
+          },
+        })
+        if (result && result.data) {
+          this.remainCourse = result.data
+        }
+      },
       showEdit(row) {
         this.getStudentList()
         this.getTeacherList()
@@ -430,7 +462,6 @@
         return date.split(':').map((item) => Number(item))
       },
       getYearAndMonthAndDay(date) {
-        
         return [date.getFullYear(), date.getMonth(), date.getDate()]
       },
       // 获取学生的信息
@@ -565,8 +596,34 @@
             const ONE_HOUR_TIME = 1000 * 60 * 60
 
             // 判断是什么类型
-            const { type, start_date, start_time, class_num } = this.form
-            const [begin, end] = start_time
+            const { type, start_date, start_time, end_time, class_num } =
+              this.form
+            const begin = start_time
+            const end = end_time
+            if (!begin) {
+              this.$message({
+                message: '请填写首节课开始时间',
+                type: 'warning',
+              })
+              return
+            }
+            if (!end) {
+              this.$message({
+                message: '请填写首节课结束时间',
+                type: 'warning',
+              })
+              return
+            }
+            let num_begin = Number(begin.replace(':', '.'))
+            let num_end = Number(end.replace(':', '.'))
+            if (num_begin >= num_end) {
+              this.$message({
+                message: `开始时间${begin}不能大于结束时间${end}`,
+                type: 'warning',
+              })
+              return
+            }
+            // const [begin, end] = start_time
             const [beginHour, beginMinute] = this.getHourAndMin(begin)
             const [endHour, endMinute] = this.getHourAndMin(end)
             const [year, month, day] = this.getYearAndMonthAndDay(start_date)
@@ -670,7 +727,7 @@
             ...this.descForm,
           },
         })
-        
+
         if (result && result.data) {
           this.$baseMessage('修改完成', 'success')
           this.$refs['descForm'].resetFields()
