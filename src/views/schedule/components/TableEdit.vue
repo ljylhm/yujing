@@ -22,7 +22,12 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <div v-if="remainCourse">{{remainCourse}}</div>
+        <div v-if="remainCourse" style="margin:0px 0px 20px 50px;line-height: 30px">
+          <span v-for="item in remainCourse" :key="item.id">
+            {{ item.course_name }}:
+            <span style="color: red">{{ item.total }}</span>
+          </span>
+        </div>
         <el-form-item label="选择老师" prop="teacher_id">
           <el-select
             v-model="form.teacher_id"
@@ -423,7 +428,7 @@
           },
         })
         if (result && result.data) {
-          this.remainCourse = result.data
+          this.remainCourse = result.data.list
         }
       },
       showEdit(row) {
