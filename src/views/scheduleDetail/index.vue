@@ -5,7 +5,8 @@
         <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
           添加
         </el-button>
-        <el-link type="primary" :href="exportUrl">导出</el-link>
+        <el-link type="primary" :href="exportUrl"  style="margin-left:20px">导出</el-link>
+        <el-link type="primary" :href="exportUrlPlus" style="margin-left:20px">导出plus</el-link>
         <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
           删除
         </el-button> -->
@@ -154,7 +155,7 @@
           <el-button type="text" @click="handleHistory(row)">
             历史记录
           </el-button>
-          <el-button type="text" @click="deleteCourse(row)">删除</el-button>
+          <el-button type="text" v-if="row.is_valid != 1 && Date.now() < Number(row.start_time ) * 1000 && row.status != 2" @click="deleteCourse(row) ">删除</el-button>
           <!-- this.$refs['edit'].showEdit(row) -->
         </template>
       </el-table-column>
@@ -262,6 +263,7 @@
           },
         },
         exportUrl: '',
+        exportUrlPlus: '',
       }
     },
     computed: {
@@ -273,6 +275,7 @@
       const id = this.$router.currentRoute.params.id
       this.queryForm.arranging_id = id
       this.exportUrl = `https://mastercenter.cn/api/export?arranging_id=${id}`
+      this.exportUrlPlus = `https://mastercenter.cn/api/student_schedul_export?arranging_id=${id}`
       this.fetchData()
     },
     beforeDestroy() {},

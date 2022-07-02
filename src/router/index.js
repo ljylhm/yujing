@@ -38,6 +38,12 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true,
   },
+  {
+    path: '/',
+    name: 'index',
+    component: () => import('@/views/public/index'),
+    hidden: true,
+  },
 ]
 
 export const asyncRoutes = [
@@ -61,11 +67,11 @@ export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/index',
+    redirect: '/noRedirect',
     children: [
       {
-        path: 'index',
-        name: 'Index',
+        path: 'user',
+        name: 'User',
         component: () => import('@/views/user/index'),
         meta: {
           title: '用户管理',

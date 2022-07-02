@@ -44,7 +44,7 @@
       :height="height"
       :element-loading-text="elementLoadingText"
     >
-      <el-table-column  label="序号" align="center">
+      <el-table-column  label="序号" align="center" width="120px">
         <template #default="scope">
           {{ scope.$index + 1 }}
         </template>
@@ -149,6 +149,24 @@
       setSelectRows(val) {
         this.selectRows = val
       },
+      async fetchDelete(id){
+         // 删除用户数据
+        try {
+          const result = await request({
+            url: 'https://mastercenter.cn/api/user/delete',
+            method: 'post',
+            data: {
+              id
+            },
+          })
+          if (result && result.code == 1001) {
+              this.$baseMessage('删除成功', 'success')
+              this.fetchData()
+          }else{
+              this.$baseMessage('删除成功', 'warning')
+          }
+        } catch (error) {}
+      },
       format(value) {
         return timeFormat(value, 'yyyy-MM-dd')
       },
@@ -162,9 +180,7 @@
       handleDelete(row) {
         if (row.id) {
           this.$baseConfirm('你确定要删除当前项吗', null, async () => {
-            const { msg } = await doDelete({ ids: row.id })
-            this.$baseMessage(msg, 'success')
-            this.fetchData()
+            this.fetchDelete(row.id)
           })
         } else {
           if (this.selectRows.length > 0) {
