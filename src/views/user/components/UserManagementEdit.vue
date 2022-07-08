@@ -11,7 +11,7 @@
           <el-radio :label="1">学生</el-radio>
           <el-radio :label="2">家长</el-radio>
           <el-radio :label="3">老师</el-radio>
-          <el-radio :label="4">管理员</el-radio>
+          <el-radio :label="4" v-if="isAdmin">管理员</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item v-if="form.type == 1" label="家长名单" prop="parent_id">
@@ -55,7 +55,16 @@
         <el-input v-model.trim="form.school" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item v-if="form.type == 1" label="年级" prop="grade">
-        <el-input v-model.trim="form.grade" autocomplete="off"></el-input>
+        <el-select v-model="form.grade" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+        <!-- <el-input v-model.trim="form.grade" autocomplete="off"></el-input> -->
       </el-form-item>
       <el-form-item v-if="form.type == 4" label="密码" prop="password">
         <el-input
@@ -73,11 +82,19 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import { doEdit } from '@/api/userManagement'
   import request from '@/utils/request'
 
   export default {
     name: 'UserManagementEdit',
+    computed: {
+      ...mapGetters({
+        avatar: 'user/avatar',
+        username: 'user/username',
+        isAdmin: 'user/isAdmin',
+      }),
+    },
     data() {
       return {
         form: {
@@ -177,6 +194,58 @@
         title: '',
         dialogFormVisible: false,
         parentList: [],
+        options: [{
+          value: "0",
+          label: "学前(k0)"
+        },{
+          value: "1",
+          label: "小班(k1)"
+        },{
+          value: "2",
+          label: "中班(k2)"
+        },{
+          value: "3",
+          label: "大班(k3)"
+        },{
+          value: "4",
+          label: "一年级(k4)"
+        },{
+          value: "5",
+          label: "二年级(k5)"
+        },{
+          value: "6",
+          label: "三年级(k6)"
+        },{
+          value: "7",
+          label: "四年级(k7)"
+        },{
+          value: "8",
+          label: "五年级(k8)"
+        },{
+          value: "9",
+          label: "六年级(k9)"
+        },{
+          value: "10",
+          label: "初一(k10)"
+        },{
+          value: "11",
+          label: "初二(k11)"
+        },{
+          value: "12",
+          label: "初三(k12)"
+        },{
+          value: "13",
+          label: "高一(k13)"
+        },{
+          value: "14",
+          label: "高二(k14)"
+        },{
+          value: "15",
+          label: "高三(k15)"
+        },{
+          value: "16",
+          label: "其他"
+        }]
       }
     },
     methods: {

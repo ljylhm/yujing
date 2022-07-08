@@ -11,7 +11,6 @@
           <el-select
             v-model="form.student_id"
             placeholder="请选择"
-            @change="onStudentChange($event)"
             :disabled="title == '编辑'"
           >
             <el-option
@@ -22,12 +21,6 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <div v-if="remainCourse" style="margin:0px 0px 20px 50px;line-height: 30px">
-          <span v-for="item in remainCourse" :key="item.id">
-            {{ item.course_name }}:
-            <span style="color: red">{{ item.total }}</span>
-          </span>
-        </div>
         <el-form-item label="选择老师" prop="teacher_id">
           <el-select
             v-model="form.teacher_id"
@@ -75,15 +68,10 @@
           <el-radio-group v-model="form.type">
             <el-radio :label="1">天</el-radio>
             <el-radio :label="2">周</el-radio>
-            <el-radio :label="3">双周</el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item
-          label="周类型"
-          prop="week_type"
-          v-if="form.type == 2 || form.type == 3"
-        >
+        <el-form-item label="周类型" prop="week_type" v-if="form.type == 2">
           <el-checkbox-group v-model="form.week_type" size="medium">
             <el-checkbox
               v-for="city in weekList"
@@ -104,7 +92,7 @@
           ></el-date-picker>
 
           <el-date-picker
-            v-if="form.type == 2 || form.type == 3"
+            v-if="form.type == 2"
             v-model="form.start_date"
             type="week"
             format="yyyy 第 WW 周"
@@ -112,7 +100,8 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="首节课时间" prop="start_time">
-          <!-- <el-time-picker
+          <el-time-picker
+            is-range
             v-model="form.start_time"
             range-separator="至"
             start-placeholder="开始时间"
@@ -120,26 +109,7 @@
             placeholder="选择时间范围"
             format="HH:mm"
             value-format="HH:mm"
-          ></el-time-picker> -->
-          <el-time-select
-            style="margin-right: 20px"
-            v-model="form.start_time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:30',
-              end: '23:59',
-            }"
-            placeholder="开始时间"
-          />
-          <el-time-select
-            v-model="form.end_time"
-            :picker-options="{
-              start: '00:00',
-              step: '00:30',
-              end: '23:59',
-            }"
-            placeholder="结束时间"
-          />
+          ></el-time-picker>
         </el-form-item>
         <el-form-item label="课程数量" prop="class_num">
           <div style="width: 100px">
@@ -159,42 +129,54 @@
     </el-dialog>
 
     <el-dialog
-      :title="'冲突预览'"
+      :title="'预览'"
       :visible.sync="dialogConflictVisible"
       width="800px"
       custom-class="dialog-preview"
+      @close="close"
     >
-      <el-table :data="conflictData">
+      <el-table :data="previewData">
         <el-table-column
           prop="start_time"
           label="开始日期"
-          width="200"
+          width="300"
           align="center"
         >
           <template slot-scope="scope">
-            {{ format(scope.row.start_time * 1000) }}
+            {{ format(scope.row.start_time) }}
           </template>
         </el-table-column>
         <el-table-column
           prop="end_time"
           label="结束日期"
-          width="200"
+          width="300"
           align="center"
         >
           <template slot-scope="scope">
-            {{ format(scope.row.end_time * 1000) }}
+            {{ format(scope.row.end_time) }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="key"
-          label="冲突原因"
-          align="center"
-        ></el-table-column>
+
+        <el-table-column label="操作" align="center">
+          <template slot-scope="scope">
+            <el-button
+              @click="handleDelete(scope.row)"
+              type="text"
+              size="small"
+            >
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
+      <div style="text-align: right; padding: 10px 0px">
+        总课时：
+        <span style="color: red; font-weight: 600">
+          {{ form.predict_time }}
+        </span>
+      </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogConflictVisible = false">
-          确 定
-        </el-button>
+        <el-button type="primary" @click="saveMain">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -203,6 +185,7 @@
       :visible.sync="dialogPreviewVisible"
       width="800px"
       custom-class="dialog-preview"
+      @close="close"
     >
       <el-table :data="previewData">
         <el-table-column
@@ -296,8 +279,6 @@
           description: '',
           start_date: '',
           start_time: '',
-          end_time: '',
-          time_arr: [],
           week_type: [],
           schedul_time: [],
           class_num: 1,
@@ -337,12 +318,9 @@
           start_date: [
             { required: true, trigger: 'change', message: '请选择开始日期' },
           ],
-          // start_time: [
-          //   { required: true, trigger: 'change', message: '请选择开始时间' },
-          // ],
-          // end_time: [
-          //   { required: true, trigger: 'change', message: '请选择结束时间' },
-          // ],
+          start_time: [
+            { required: true, trigger: 'change', message: '请选择开始时间' },
+          ],
           week_type: [
             {
               required: true,
@@ -413,24 +391,11 @@
           },
         ],
         conflictData: [],
-        remainCourse: "",
       }
     },
     created() {},
     mounted() {},
     methods: {
-      async onStudentChange(value) {
-        const result = await request({
-          url: 'https://mastercenter.cn/api/user/get_schdule ',
-          method: 'post',
-          data: {
-            student_id: value,
-          },
-        })
-        if (result && result.data) {
-          this.remainCourse = result.data.list
-        }
-      },
       showEdit(row) {
         this.getStudentList()
         this.getTeacherList()
@@ -462,6 +427,9 @@
       },
       format(value) {
         return timeFormat(value, 'yyyy-MM-dd hh:mm')
+      },
+      timeFormatNew(value, s) {
+        return timeFormat(value, s)
       },
       getHourAndMin(date) {
         return date.split(':').map((item) => Number(item))
@@ -575,11 +543,6 @@
               schedul_time,
             },
           })
-          if (result && result.code == '1007') {
-            this.conflictData = result.data
-            this.dialogConflictVisible = true
-            return
-          }
           if (result && result.data) {
             this.$baseMessage('添加成功', 'success')
             this.$refs['form'].resetFields()
@@ -587,7 +550,7 @@
             this.dialogPreviewVisible = false
             this.form = this.$options.data().form
           } else {
-            // this.$baseMessage(result.msg || this.title + '失败', 'error')
+            this.$baseMessage(result.msg || this.title + '失败', 'error')
           }
         })
       },
@@ -596,50 +559,17 @@
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
             const schedul_time = []
-            const ONE_DAY_TIME = 1000 * 60 * 60 * 24
-            const ONE_WEEK_TIME = ONE_DAY_TIME * 7
-            const ONE_HOUR_TIME = 1000 * 60 * 60
 
             // 判断是什么类型
-            const { type, start_date, start_time, end_time, class_num } =
-              this.form
-            const begin = start_time
-            const end = end_time
-            if (!begin) {
-              this.$message({
-                message: '请填写首节课开始时间',
-                type: 'warning',
-              })
-              return
-            }
-            if (!end) {
-              this.$message({
-                message: '请填写首节课结束时间',
-                type: 'warning',
-              })
-              return
-            }
-            let num_begin = Number(begin.replace(':', '.'))
-            let num_end = Number(end.replace(':', '.'))
-            if (num_begin >= num_end) {
-              this.$message({
-                message: `开始时间${begin}不能大于结束时间${end}`,
-                type: 'warning',
-              })
-              return
-            }
-            // const [begin, end] = start_time
+            const { type, start_date, start_time, class_num } = this.form
+            const [begin, end] = start_time
+
             const [beginHour, beginMinute] = this.getHourAndMin(begin)
             const [endHour, endMinute] = this.getHourAndMin(end)
             const [year, month, day] = this.getYearAndMonthAndDay(start_date)
 
-            // const hourClassNum =
-            //   (wrapEnDayDate - wrapStartDayDate) / ONE_HOUR_TIME
-            // console.log('hourClassNum', wrapEnDayDate, wrapStartDayDate, hourClassNum)
-            // if (class_num % hourClassNum !== 0) {
-            //   this.$baseMessage('课程数量和课程时间冲突，请重填', 'error')
-            //   return
-            // }
+            const ONE_DAY_TIME = 1000 * 60 * 60 * 24
+            const ONE_WEEK_TIME = ONE_DAY_TIME * 7
 
             if (type == 1) {
               // 天
@@ -671,6 +601,7 @@
                   (weekTypeItem) => item.name == weekTypeItem
                 )
               })
+
               const wrapStartDate =
                 new Date(start_date).getTime() - ONE_DAY_TIME
 
@@ -698,9 +629,7 @@
                   schedul_time.push([startDayDate, enDayDate])
                   if (++count >= this.form.class_num) return
                 }
-
-                const t = type == 2 ? ONE_WEEK_TIME : ONE_WEEK_TIME * 2
-                fn(startTime + t)
+                fn(startTime + ONE_WEEK_TIME)
               }
               fn(wrapStartDate)
             }
@@ -732,7 +661,6 @@
             ...this.descForm,
           },
         })
-
         if (result && result.data) {
           this.$baseMessage('修改完成', 'success')
           this.$refs['descForm'].resetFields()

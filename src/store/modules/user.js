@@ -18,12 +18,14 @@ const state = () => ({
   username: '',
   avatar: '',
   permissions: [],
+  isAdmin: false
 })
 const getters = {
   accessToken: (state) => state.accessToken,
   username: (state) => state.username,
   avatar: (state) => state.avatar,
   permissions: (state) => state.permissions,
+  isAdmin: (state) => state.isAdmin,
 }
 const mutations = {
   setAccessToken(state, accessToken) {
@@ -35,6 +37,9 @@ const mutations = {
   },
   setAvatar(state, avatar) {
     state.avatar = avatar
+  },
+  setUserStatus(state, status){
+    state.isAdmin = status
   },
   setPermissions(state, permissions) {
     state.permissions = permissions
@@ -70,9 +75,10 @@ const actions = {
   },
   async getUserInfo({ commit, state }) {
     const { data } = await getUserInfo(state.accessToken)
-    const { name } = data
+    const { name, is_admin } = data
     commit('setUsername', name)
     commit('setAvatar', "https://avatars.githubusercontent.com/u/36689704?s=50")
+    commit('setUserStatus', is_admin == 1)
   },
   async logout({ dispatch }) {
     // await logout(state.accessToken)

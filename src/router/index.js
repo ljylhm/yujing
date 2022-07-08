@@ -38,6 +38,12 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true,
   },
+  {
+    path: '/',
+    name: 'index',
+    component: () => import('@/views/public/index'),
+    hidden: true,
+  },
 ]
 
 export const asyncRoutes = [
@@ -61,11 +67,11 @@ export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/index',
+    redirect: '/noRedirect',
     children: [
       {
-        path: 'index',
-        name: 'Index',
+        path: 'user',
+        name: 'User',
         component: () => import('@/views/user/index'),
         meta: {
           title: '用户管理',
@@ -203,28 +209,17 @@ export const asyncRoutes = [
     meta: { title: '常用管理', icon: 'book-open' },
     children: [
       {
-        path: '/sign',
-        name: 'sign',
-        component: () => import('@/views/sign/index'),
+        path: '/birthday',
+        name: 'birthday',
+        component: () => import('@/views/birthday/index'),
         meta: {
-          title: '签到管理',
+          title: '生日管理',
           icon: 'atom',
-          affix: true,
-        },
-      },
-      {
-        path: '/vacation',
-        name: 'vacation',
-        component: () => import('@/views/vacation/index'),
-        meta: {
-          title: '请假管理',
-          icon: 'envelope',
           affix: true,
         },
       },
     ],
   },
-
   {
     path: '/review',
     component: Layout,
@@ -248,6 +243,26 @@ export const asyncRoutes = [
         meta: {
           title: '调课审批',
           icon: 'clipboard',
+          affix: true,
+        },
+      },
+      {
+        path: '/sign',
+        name: 'sign',
+        component: () => import('@/views/sign/index'),
+        meta: {
+          title: '签到审批',
+          icon: 'atom',
+          affix: true,
+        },
+      },
+      {
+        path: '/vacation',
+        name: 'vacation',
+        component: () => import('@/views/vacation/index'),
+        meta: {
+          title: '请假审批',
+          icon: 'envelope',
           affix: true,
         },
       },
