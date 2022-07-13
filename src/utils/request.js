@@ -53,7 +53,8 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     if (store.getters['user/accessToken']) {
-      config.headers["Authorization"] = "bearer "+store.getters['user/accessToken']
+      config.headers['Authorization'] =
+        'bearer ' + store.getters['user/accessToken']
     }
     //这里会过滤所有为空、0、false的key，如果不需要请自行注释
     if (config.data)
@@ -117,7 +118,9 @@ instance.interceptors.response.use(
         const code = message.substr(message.length - 3)
         message = '后端接口' + code + '异常'
       }
-      Vue.prototype.$baseMessage(message || `后端接口未知异常`, 'error')
+      if (location.hash !== '#/') {
+        Vue.prototype.$baseMessage(message || `后端接口未知异常`, 'error')
+      }
       return Promise.reject(error)
     }
   }
