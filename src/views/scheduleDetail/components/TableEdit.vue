@@ -7,49 +7,37 @@
       @close="close"
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <!-- <el-form-item label="选择学生" prop="student_id">
-        <el-select v-model="form.student_id" placeholder="请选择" >
-           <el-option
-            v-for="item in studentList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="选择老师" prop="teacher_id">
-        <el-select v-model="form.teacher_id" placeholder="请选择">
-           <el-option
-            v-for="item in teacherList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="选择科目" prop="course_id">
-        <el-select v-model="form.course_id" placeholder="请选择">
-           <el-option
-            v-for="item in subjectList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="选择教室" prop="classroom_id">
-        <el-select v-model="form.classroom_id" placeholder="请选择">
-           <el-option
-            v-for="item in classRoomList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item> -->
         <el-form-item label="备注" prop="description">
           <div>
             <el-input v-model="form.description" type="textarea" :rows="2" />
+          </div>
+        </el-form-item>
+        <el-form-item label="选择老师" prop="teacher_id">
+          <el-select v-model="form.teacher_id" filterable placeholder="请选择">
+            <el-option
+              v-for="item in teacherList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="开始日期" prop="description">
+          <div>
+            <el-date-picker
+              v-model="form.start_time"
+              type="datetime"
+              placeholder="选择日期时间"
+            ></el-date-picker>
+          </div>
+        </el-form-item>
+        <el-form-item label="结束日期" prop="description">
+          <div>
+            <el-date-picker
+              v-model="form.end_time"
+              type="datetime"
+              placeholder="选择日期时间"
+            ></el-date-picker>
           </div>
         </el-form-item>
         <el-form-item label="实际课时" prop="real_time">
@@ -243,8 +231,8 @@
 
         const start_date = timeFormat(start_time, 'yyyy-MM-dd')
         const start_date_hour = [
-          timeFormat(start_time, 'hh:mm'),
-          timeFormat(end_time, 'hh:mm'),
+          timeFormat(start_time, 'yyyy-MM-dd hh:mm'),
+          timeFormat(end_time, 'yyyy-MM-dd hh:mm'),
         ]
 
         if (!row) {
@@ -254,6 +242,8 @@
           this.form = Object.assign({}, row, {
             start_date,
             start_date_hour,
+            start_time: start_date_hour[0],
+            end_time: start_date_hour[1],
           })
         }
         this.dialogFormVisible = true
@@ -385,9 +375,24 @@
       },
 
       save() {
-        
         this.$refs['form'].validate(async (valid) => {
-          const { id, description, real_time } = this.form
+          let { id, description, real_time, start_time, end_time, teacher_id } = this.form
+           if (!end_time || !start_time) {
+            this.$baseMessage('请填写时间', 'warning')
+            return
+          }
+          if (typeof start_time == 'object') start_time = start_time.getTime()
+          else if (typeof start_time == 'string')
+            start_time = new Date(start_time).getTime()
+
+          if (typeof end_time == 'object') end_time = end_time.getTime()
+          else if (typeof end_time == 'string')
+            end_time = new Date(end_time).getTime()
+          
+          if (end_time < start_time) {
+            this.$baseMessage('结束时间必须大于开始时间', 'warning')
+            return
+          }
           if (valid) {
             const result = await request({
               url: 'https://mastercenter.cn/api/schedul/schedul_modify',
@@ -396,6 +401,9 @@
                 id,
                 description,
                 real_time,
+                teacher_id,
+                start_time: start_time / 1000,
+                end_time: end_time / 1000,
               },
             })
             if (result && result.data) {

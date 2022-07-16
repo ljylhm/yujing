@@ -17,6 +17,7 @@
       <el-form-item v-if="form.type == 1" label="家长名单" prop="parent_id">
         <el-select
           v-model="form.parent_id"
+          filterable
           placeholder="请选择"
           :disabled="title == '编辑'"
         >
@@ -110,9 +111,9 @@
         },
         rules: {
           name: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
-          birthday: [{ required: true, trigger: 'blur', message: '请选择生日' }],
-          school: [{ required: true, trigger: 'blur', message: '请输入学校' }],
-          grade: [{ required: true, trigger: 'blur', message: '请输入年级' }],
+          // birthday: [{ required: true, trigger: 'blur', message: '请选择生日' }],
+          // school: [{ required: true, trigger: 'blur', message: '请输入学校' }],
+          // grade: [{ required: true, trigger: 'blur', message: '请输入年级' }],
           password: [
             {
               trigger: 'blur',
@@ -142,11 +143,11 @@
           ],
           phone: [
             { required: true, trigger: 'change', message: '请输入联系电话' },
-            {
-              pattern:
-                /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
-              message: '请输入正确的联系电话',
-            },
+            // {
+            //   pattern:
+            //     /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
+            //   message: '请输入正确的联系电话',
+            // },
           ],
           type: [{ required: true, trigger: 'blur', message: '请选择权限' }],
         },
@@ -183,11 +184,11 @@
           ],
           phone: [
             { required: true, trigger: 'change', message: '请输入联系电话' },
-            {
-              pattern:
-                /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
-              message: '请输入正确的联系电话',
-            },
+            // {
+            //   pattern:
+            //     /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
+            //   message: '请输入正确的联系电话',
+            // },
           ],
           type: [{ required: true, trigger: 'blur', message: '请选择权限' }],
         },

@@ -22,7 +22,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <div v-if="remainCourse" style="margin:0px 0px 20px 50px;line-height: 30px">
+        <div
+          v-if="remainCourse"
+          style="margin: 0px 0px 20px 50px; line-height: 30px"
+        >
           <span v-for="item in remainCourse" :key="item.id">
             {{ item.course_name }}:
             <span style="color: red">{{ item.total }}</span>
@@ -123,6 +126,7 @@
           ></el-time-picker> -->
           <el-time-select
             style="margin-right: 20px"
+            @focus="setStartFocus"
             v-model="form.start_time"
             :picker-options="{
               start: '00:00',
@@ -133,6 +137,7 @@
           />
           <el-time-select
             v-model="form.end_time"
+            @focus="setEndFocus"
             :picker-options="{
               start: '00:00',
               step: '00:30',
@@ -204,7 +209,49 @@
       width="800px"
       custom-class="dialog-preview"
     >
+      <el-form ref="previewform" :model="previewform" label-width="120px">
+        <el-form-item label="首节课开始时间" prop="start_date">
+          <el-date-picker
+            v-model="previewform.start_date"
+            type="date"
+            align="right"
+            placeholder="开始日期"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="首节课时间" prop="start_time">
+          <el-time-select
+            style="margin-right: 20px"
+            @focus="setStartFocusV2"
+            v-model="previewform.start_time"
+            :picker-options="{
+              start: '00:00',
+              step: '00:30',
+              end: '23:59',
+            }"
+            placeholder="开始时间"
+          />
+          <el-time-select
+            v-model="previewform.end_time"
+            @focus="setEndFocusV2"
+            :picker-options="{
+              start: '00:00',
+              step: '00:30',
+              end: '23:59',
+            }"
+            placeholder="结束时间"
+          />
+        </el-form-item>
+        <el-form-item label="" prop="">
+          <el-button type="primary" @click="addItemOne">添加</el-button>
+        </el-form-item>
+      </el-form>
+
       <el-table :data="previewData">
+        <el-table-column label="序号" width="60" align="center">
+          <template #default="scope">
+            {{ scope.$index + 1 }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="start_time"
           label="开始日期"
@@ -229,7 +276,7 @@
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button
-              @click="handleDelete(scope.row)"
+              @click="handleDelete(scope.$index)"
               type="text"
               size="small"
             >
@@ -301,6 +348,11 @@
           week_type: [],
           schedul_time: [],
           class_num: 1,
+        },
+        previewform: {
+          start_date: '',
+          start_time: '',
+          end_time: '',
         },
         descForm: {
           description: '',
@@ -413,12 +465,91 @@
           },
         ],
         conflictData: [],
-        remainCourse: "",
+        remainCourse: '',
       }
     },
     created() {},
     mounted() {},
     methods: {
+      setStartFocus() {
+        if (!this.form.start_time) this.form.start_time = '08:00'
+      },
+      setEndFocus() {
+        if (!this.form.end_time) this.form.end_time = '08:00'
+      },
+      setStartFocusV2() {
+        if (!this.previewform.start_time) this.previewform.start_time = '08:00'
+      },
+      setEndFocusV2() {
+        if (!this.previewform.end_time) this.previewform.end_time = '08:00'
+      },
+      addItemOne() {
+        const schedul_time = []
+        const ONE_DAY_TIME = 1000 * 60 * 60 * 24
+        const ONE_WEEK_TIME = ONE_DAY_TIME * 7
+        const ONE_HOUR_TIME = 1000 * 60 * 60
+
+        // 判断是什么类型
+        const { start_date, start_time, end_time } = this.previewform
+        const begin = start_time
+        const end = end_time
+        if (!begin) {
+          this.$message({
+            message: '请填写首节课开始时间',
+            type: 'warning',
+          })
+          return
+        }
+        if (!end) {
+          this.$message({
+            message: '请填写首节课结束时间',
+            type: 'warning',
+          })
+          return
+        }
+        let num_begin = Number(begin.replace(':', '.'))
+        let num_end = Number(end.replace(':', '.'))
+        if (num_begin >= num_end) {
+          this.$message({
+            message: `开始时间${begin}不能大于结束时间${end}`,
+            type: 'warning',
+          })
+          return
+        }
+        const [beginHour, beginMinute] = this.getHourAndMin(begin)
+        const [endHour, endMinute] = this.getHourAndMin(end)
+        const [year, month, day] = this.getYearAndMonthAndDay(start_date)
+
+        // 天
+        const startDayDate = new Date(
+          year,
+          month,
+          day,
+          beginHour,
+          beginMinute
+        ).getTime()
+        const enDayDate = new Date(
+          year,
+          month,
+          day,
+          endHour,
+          endMinute
+        ).getTime()
+
+        const isRepeate = this.previewData.some((item) => {
+          return item.start_time == startDayDate && item.end_time === enDayDate
+        })
+
+        if (isRepeate) {
+          this.$baseMessage('已经有一条相同时间课时', 'warning')
+        } else {
+          this.previewData.push({
+            start_time: startDayDate,
+            end_time: enDayDate,
+          })
+          this.handleClassNum()
+        }
+      },
       async onStudentChange(value) {
         const result = await request({
           url: 'https://mastercenter.cn/api/user/get_schdule ',
@@ -530,14 +661,14 @@
 
       handleDelete(index) {
         this.previewData.splice(index, 1)
-        this.form.schedulItem.splice(index, 1)
+        // this.form.schedulItem.splice(index, 1)
         this.handleClassNum()
       },
 
-      getOneClassTimes() {
+      getOneClassTimes(item) {
         const ONE_HOUR_TIME = 1000 * 60 * 60
-        const wrapStartTime = this.previewData[0].start_time
-        const wrapEndTime = this.previewData[0].end_time
+        const wrapStartTime = item.start_time
+        const wrapEndTime = item.end_time
         const diffClassTimes = Number(
           (
             (Number(wrapEndTime) - Number(wrapStartTime)) /
@@ -550,20 +681,26 @@
       handleClassNum() {
         // 计算课时
         // 任取一个开始时间和结束时间
-        const oneClassTimes = this.getOneClassTimes()
-        const diffClassTimes = oneClassTimes * this.form.class_num
-        this.form.predict_time = diffClassTimes
+        if (this.previewData.length == 0) {
+          this.form.predict_time = 0
+        } else {
+          const diffClassTimes = this.previewData.reduce((prev, current) => {
+            return prev + this.getOneClassTimes(current)
+          }, 0)
+          // const diffClassTimes = oneClassTimes * this.previewData.length
+          this.form.predict_time = diffClassTimes
+        }
       },
 
       saveMain() {
         this.$nextTick(async () => {
-          const num = this.getOneClassTimes()
+          // const num = this.getOneClassTimes()
           // 传给后端的时间戳转成unix
           const schedul_time = this.previewData.map((item) => {
             return {
               start_time: item.start_time / 1000,
               end_time: item.end_time / 1000,
-              num,
+              num: this.getOneClassTimes(item),
             }
           })
 
@@ -632,6 +769,27 @@
             const [beginHour, beginMinute] = this.getHourAndMin(begin)
             const [endHour, endMinute] = this.getHourAndMin(end)
             const [year, month, day] = this.getYearAndMonthAndDay(start_date)
+
+            // 天
+            const startDayDate = new Date(
+              year,
+              month,
+              day,
+              beginHour,
+              beginMinute
+            ).getTime()
+            const enDayDate = new Date(
+              year,
+              month,
+              day,
+              endHour,
+              endMinute
+            ).getTime()
+
+            this.previewData.push({
+              start_time: startDayDate,
+              end_time: enDayDate,
+            })
 
             // const hourClassNum =
             //   (wrapEnDayDate - wrapStartDayDate) / ONE_HOUR_TIME

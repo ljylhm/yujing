@@ -159,25 +159,21 @@
         this.$refs['edit'].showEdit(row)
       },
       handleDelete(row) {
-        if (row.id) {
-          this.$baseConfirm('你确定要删除当前项吗', null, async () => {
-            const { msg } = await doDelete({ ids: row.id })
-            this.$baseMessage(msg, 'success')
-            this.fetchData()
+        this.$baseConfirm('你确定要删除此项吗', null, async () => {
+          const result = await request({
+            url: 'https://mastercenter.cn/api/classroom/delete',
+            method: 'post',
+            data: {
+              id: row.id,
+            },
           })
-        } else {
-          if (this.selectRows.length > 0) {
-            const ids = this.selectRows.map((item) => item.id).join()
-            this.$baseConfirm('你确定要删除选中项吗', null, async () => {
-              const { msg } = await doDelete({ ids: ids })
-              this.$baseMessage(msg, 'success')
-              this.fetchData()
-            })
+          if (result && result.data) {
+            this.$baseMessage('删除成功', 'success')
           } else {
-            this.$baseMessage('未选中任何行', 'error')
-            return false
+            this.$baseMessage(result.msg || '删除失败', 'error')
           }
-        }
+          this.fetchData()
+        })
       },
       handleSizeChange(val) {
         this.queryForm.limit = val

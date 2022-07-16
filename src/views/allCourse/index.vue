@@ -37,6 +37,15 @@
               ></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="">
+            <el-date-picker
+              v-model="queryForm.date"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            ></el-date-picker>
+          </el-form-item>
           <el-form-item>
             <el-button
               icon="el-icon-search"
@@ -390,14 +399,26 @@
         this.fetchData()
       },
       async fetchData() {
+
+        const { date } = this.queryForm
+        let start_time = ''
+        let end_time = ''
+        if (this.queryForm.date) {
+          start_time = this.queryForm.date[0].getTime() / 1000
+          end_time = this.queryForm.date[1].getTime() / 1000
+        }
         this.listLoading = true
+        const wrapForm = {
+          page: this.queryForm.page,
+          limit: this.queryForm.limit,
+          start_time,
+          end_time
+        }
         try {
           const result = await request({
             url: 'https://mastercenter.cn/api/schedul/list',
             method: 'post',
-            data: {
-              ...this.queryForm,
-            },
+            data: wrapForm,
           })
           if (result && result.data && result.data.list) {
             this.list = result.data.list

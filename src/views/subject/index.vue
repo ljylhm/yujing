@@ -154,23 +154,21 @@
       },
       handleDelete(row) {
         if (row.id) {
-          this.$baseConfirm('你确定要删除当前项吗', null, async () => {
-            const { msg } = await doDelete({ ids: row.id })
-            this.$baseMessage(msg, 'success')
+          this.$baseConfirm('你确定要删除此项吗', null, async () => {
+            const result = await request({
+              url: 'https://mastercenter.cn/api/course/delete',
+              method: 'post',
+              data: {
+                id: row.id,
+              },
+            })
+            if (result && result.data) {
+              this.$baseMessage('删除成功', 'success')
+            } else {
+              this.$baseMessage(result.msg || '删除失败', 'error')
+            }
             this.fetchData()
           })
-        } else {
-          if (this.selectRows.length > 0) {
-            const ids = this.selectRows.map((item) => item.id).join()
-            this.$baseConfirm('你确定要删除选中项吗', null, async () => {
-              const { msg } = await doDelete({ ids: ids })
-              this.$baseMessage(msg, 'success')
-              this.fetchData()
-            })
-          } else {
-            this.$baseMessage('未选中任何行', 'error')
-            return false
-          }
         }
       },
       handleSizeChange(val) {
