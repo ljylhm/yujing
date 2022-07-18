@@ -41,7 +41,7 @@
             <el-option
               v-for="item in teacherList"
               :key="item.id"
-              :label="item.name"
+              :label="item.name + '(' + item.description + ')'"
               :value="item.id"
             ></el-option>
           </el-select>
@@ -130,7 +130,7 @@
             v-model="form.start_time"
             :picker-options="{
               start: '00:00',
-              step: '00:30',
+              step: '00:05',
               end: '23:59',
             }"
             placeholder="开始时间"
@@ -140,7 +140,7 @@
             @focus="setEndFocus"
             :picker-options="{
               start: '00:00',
-              step: '00:30',
+              step: '00:05',
               end: '23:59',
             }"
             placeholder="结束时间"
@@ -225,7 +225,7 @@
             v-model="previewform.start_time"
             :picker-options="{
               start: '00:00',
-              step: '00:30',
+              step: '00:05',
               end: '23:59',
             }"
             placeholder="开始时间"
@@ -235,7 +235,7 @@
             @focus="setEndFocusV2"
             :picker-options="{
               start: '00:00',
-              step: '00:30',
+              step: '00:05',
               end: '23:59',
             }"
             placeholder="结束时间"

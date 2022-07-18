@@ -31,7 +31,7 @@
             <el-option
               v-for="item in teacherList"
               :key="item.id"
-              :label="item.name"
+              :label="item.name + '(' + item.description + ')'"
               :value="item.id"
             ></el-option>
           </el-select>
