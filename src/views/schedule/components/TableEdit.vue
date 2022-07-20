@@ -151,6 +151,17 @@
             <el-input v-model="form.class_num" min="1" type="number" />
           </div>
         </el-form-item>
+        <el-form-item label="总课时" prop="class_num">
+          <div style="width: 200px">
+            <el-button size="small" type="primary" @click="countCourseTime">
+              点击计算
+            </el-button>
+            <span style="color: red; margin-left: 10px">
+              {{ dynamicCourse }}
+            </span>
+          </div>
+        </el-form-item>
+
         <el-form-item label="课程备注" prop="description">
           <div>
             <el-input v-model="form.description" type="textarea" :rows="2" />
@@ -466,6 +477,8 @@
         ],
         conflictData: [],
         remainCourse: '',
+
+        dynamicCourse: 0,
       }
     },
     created() {},
@@ -727,6 +740,153 @@
             // this.$baseMessage(result.msg || this.title + '失败', 'error')
           }
         })
+      },
+
+      onChangeOne() {
+        this.countCourseTime()
+      },
+
+      // 计算课时时间
+      countCourseTime() {
+        const schedul_time = []
+        const ONE_DAY_TIME = 1000 * 60 * 60 * 24
+        const ONE_WEEK_TIME = ONE_DAY_TIME * 7
+        const ONE_HOUR_TIME = 1000 * 60 * 60
+
+        // 判断是什么类型
+        const { type, start_date, start_time, end_time, class_num } = this.form
+        const begin = start_time
+        const end = end_time
+        if (!begin) {
+          this.$message({
+            message: '请填写首节课开始时间',
+            type: 'warning',
+          })
+          return
+        }
+        if (!end) {
+          this.$message({
+            message: '请填写首节课结束时间',
+            type: 'warning',
+          })
+          return
+        }
+        let num_begin = Number(begin.replace(':', '.'))
+        let num_end = Number(end.replace(':', '.'))
+        if (num_begin >= num_end) {
+          this.$message({
+            message: `开始时间${begin}不能大于结束时间${end}`,
+            type: 'warning',
+          })
+          return
+        }
+        // const [begin, end] = start_time
+        const [beginHour, beginMinute] = this.getHourAndMin(begin)
+        const [endHour, endMinute] = this.getHourAndMin(end)
+        const [year, month, day] = this.getYearAndMonthAndDay(start_date)
+
+        // 天
+        const startDayDate = new Date(
+          year,
+          month,
+          day,
+          beginHour,
+          beginMinute
+        ).getTime()
+        const enDayDate = new Date(
+          year,
+          month,
+          day,
+          endHour,
+          endMinute
+        ).getTime()
+
+        this.previewData.push({
+          start_time: startDayDate,
+          end_time: enDayDate,
+        })
+
+        if (type == 1) {
+          // 天
+          const startDayDate = new Date(
+            year,
+            month,
+            day,
+            beginHour,
+            beginMinute
+          ).getTime()
+          const enDayDate = new Date(
+            year,
+            month,
+            day,
+            endHour,
+            endMinute
+          ).getTime()
+          for (let i = 0; i < Number(class_num); i++) {
+            schedul_time.push([
+              startDayDate + i * ONE_DAY_TIME,
+              enDayDate + i * ONE_DAY_TIME,
+            ])
+          }
+        } else {
+          // 周
+          // 重新开始排序
+          const sortWeekType = this.weekList.filter((item) => {
+            return this.form.week_type.some(
+              (weekTypeItem) => item.name == weekTypeItem
+            )
+          })
+          const wrapStartDate = new Date(start_date).getTime() - ONE_DAY_TIME
+
+          let count = 0
+          const fn = (startTime) => {
+            for (let i of sortWeekType) {
+              // 拿到起始日期
+              const [year, month, day] = this.getYearAndMonthAndDay(
+                new Date(startTime + i.id * ONE_DAY_TIME)
+              )
+              const startDayDate = new Date(
+                year,
+                month,
+                day,
+                beginHour,
+                beginMinute
+              ).getTime()
+              const enDayDate = new Date(
+                year,
+                month,
+                day,
+                endHour,
+                endMinute
+              ).getTime()
+              schedul_time.push([startDayDate, enDayDate])
+              if (++count >= this.form.class_num) return
+            }
+
+            const t = type == 2 ? ONE_WEEK_TIME : ONE_WEEK_TIME * 2
+            fn(startTime + t)
+          }
+          fn(wrapStartDate)
+        }
+
+        // this.form.schedul_time = schedul_time
+
+        // 根据时间列表生成一份预览的table数据
+        const previewData = schedul_time.map((schedulItem) => {
+          return {
+            start_time: schedulItem[0],
+            end_time: schedulItem[1],
+          }
+        })
+
+        if (previewData.length == 0) {
+          this.dynamicCourse = 0
+        } else {
+          const diffClassTimes = previewData.reduce((prev, current) => {
+            return prev + this.getOneClassTimes(current)
+          }, 0)
+          this.dynamicCourse = diffClassTimes
+        }
       },
 
       save() {
