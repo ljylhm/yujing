@@ -150,7 +150,7 @@
           <el-button type="text" @click="handleHistory(row)">
             历史记录
           </el-button>
-          <el-button type="text" @click="deleteCourse(row)">删除</el-button>
+          <el-button type="text" v-if="row.is_valid != 1 && Date.now() < Number(row.start_time ) * 1000 && row.status != 2" @click="deleteCourse(row)">删除</el-button>
           <!-- this.$refs['edit'].showEdit(row) -->
         </template>
       </el-table-column>
