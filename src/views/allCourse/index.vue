@@ -129,7 +129,7 @@
           </el-tag>
         </template>
       </el-table-column>
-       <el-table-column
+      <el-table-column
         label="备注"
         prop="description"
         align="center"
@@ -150,7 +150,17 @@
           <el-button type="text" @click="handleHistory(row)">
             历史记录
           </el-button>
-          <el-button type="text" @click="deleteCourse(row)">删除</el-button>
+          <el-button
+            v-if="
+              row.is_valid != 1 &&
+              Date.now() < Number(row.start_time) * 1000 &&
+              row.status != 2
+            "
+            type="text"
+            @click="deleteCourse(row)"
+          >
+            删除
+          </el-button>
           <!-- this.$refs['edit'].showEdit(row) -->
         </template>
       </el-table-column>
@@ -399,7 +409,6 @@
         this.fetchData()
       },
       async fetchData() {
-
         const { date } = this.queryForm
         let start_time = ''
         let end_time = ''
@@ -412,7 +421,7 @@
           page: this.queryForm.page,
           limit: this.queryForm.limit,
           start_time,
-          end_time
+          end_time,
         }
         try {
           const result = await request({
