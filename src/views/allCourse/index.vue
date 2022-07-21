@@ -418,6 +418,7 @@
         }
         this.listLoading = true
         const wrapForm = {
+          ...this.queryForm,
           page: this.queryForm.page,
           limit: this.queryForm.limit,
           start_time,
