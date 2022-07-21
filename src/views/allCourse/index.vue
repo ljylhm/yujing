@@ -400,7 +400,7 @@
       },
       async fetchData() {
 
-        const { date } = this.queryForm
+        const { date, status } = this.queryForm
         let start_time = ''
         let end_time = ''
         if (this.queryForm.date) {
@@ -409,6 +409,7 @@
         }
         this.listLoading = true
         const wrapForm = {
+          ...this.queryForm,
           page: this.queryForm.page,
           limit: this.queryForm.limit,
           start_time,
