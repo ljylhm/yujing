@@ -115,7 +115,8 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="首节课时间" prop="start_time">
-          <!-- <el-time-picker
+          <el-time-picker
+            style="margin-right: 20px"
             v-model="form.start_time"
             range-separator="至"
             start-placeholder="开始时间"
@@ -123,8 +124,17 @@
             placeholder="选择时间范围"
             format="HH:mm"
             value-format="HH:mm"
-          ></el-time-picker> -->
-          <el-time-select
+          ></el-time-picker>
+          <el-time-picker
+            v-model="form.end_time"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            placeholder="选择时间范围"
+            format="HH:mm"
+            value-format="HH:mm"
+          ></el-time-picker>
+          <!-- <el-time-select
             style="margin-right: 20px"
             @focus="setStartFocus"
             v-model="form.start_time"
@@ -144,7 +154,7 @@
               end: '23:59',
             }"
             placeholder="结束时间"
-          />
+          /> -->
         </el-form-item>
         <el-form-item label="课程数量" prop="class_num">
           <div style="width: 100px">
