@@ -132,6 +132,26 @@ export const asyncRoutes = [
       },
     ],
   },
+
+  {
+    path: '/',
+    component: Layout,
+    redirect: 'noRedirect',
+    children: [
+      {
+        path: '/course_detail/:id',
+        name: 'course_detail',
+        component: () => import('@/views/courseDetail/index'),
+        meta: {
+          title: '课时详情',
+          icon: 'align-left',
+          affix: true,
+        },
+      },
+    ],
+    hidden: true,
+  },
+
   {
     path: '/',
     component: Layout,

@@ -96,7 +96,12 @@
         label="老师"
         prop="teacher_name"
         align="center"
-      ></el-table-column>
+      >
+        <template #default="scope">
+          {{ scope.row.teacher_name }}
+          {{scope.row.teacher_description ? `(${scope.row.teacher_description})` : "" }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="预估课时"
         prop="predict_time"

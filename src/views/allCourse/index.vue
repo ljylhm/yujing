@@ -2,12 +2,18 @@
   <div class="table-container">
     <vab-query-form>
       <vab-query-form-right-panel :span="24">
+        
         <el-form
           ref="form"
           :model="queryForm"
           :inline="true"
           @submit.native.prevent
-        >
+        > 
+          <el-form-item label="">
+            <el-button type="primary" @click="exportDetail">
+              导出
+            </el-button>
+          </el-form-item>
           <el-form-item label="学科">
             <el-input
               v-model="queryForm.course_name"
@@ -23,7 +29,13 @@
           <el-form-item label="老师">
             <el-input
               v-model="queryForm.teacher_name"
-              placeholder="请输入学生查询"
+              placeholder="请输入老师查询"
+            />
+          </el-form-item>
+          <el-form-item label="老师备注">
+            <el-input
+              v-model="queryForm.teacher_description"
+              placeholder="请输入老师备注查询"
             />
           </el-form-item>
           <el-form-item>
@@ -109,7 +121,12 @@
         label="老师"
         prop="teacher_name"
         align="center"
-      ></el-table-column>
+      >
+        <template #default="scope">
+          {{ scope.row.teacher_name }}
+          {{scope.row.teacher_description ? `(${scope.row.teacher_description})` : "" }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="实际课时"
         prop="real_time"
@@ -129,7 +146,7 @@
           </el-tag>
         </template>
       </el-table-column>
-       <el-table-column
+      <el-table-column
         label="备注"
         prop="description"
         align="center"
@@ -150,7 +167,17 @@
           <el-button type="text" @click="handleHistory(row)">
             历史记录
           </el-button>
-          <el-button type="text" v-if="row.is_valid != 1 && Date.now() < Number(row.start_time ) * 1000 && row.status != 2" @click="deleteCourse(row)">删除</el-button>
+          <el-button
+            v-if="
+              row.is_valid != 1 &&
+              Date.now() < Number(row.start_time) * 1000 &&
+              row.status != 2
+            "
+            type="text"
+            @click="deleteCourse(row)"
+          >
+            删除
+          </el-button>
           <!-- this.$refs['edit'].showEdit(row) -->
         </template>
       </el-table-column>
@@ -209,6 +236,7 @@
           course_name: '',
           student_name: '',
           teacher_name: '',
+          teacher_description: "",
           status: '',
         },
         tagList: {
@@ -274,6 +302,17 @@
     beforeDestroy() {},
     mounted() {},
     methods: {
+      exportDetail(){
+          let baseUrl = "https://mastercenter.cn/api/detail_export"
+          let exportUrl = []
+          for(let i in this.queryForm){
+            if(this.queryForm[i] !== "" && this.queryForm[i] !== undefined){
+                exportUrl.push(`${i}=${this.queryForm[i]}`)
+            }
+          }
+          let exportUrlToString = exportUrl.join("&")
+          window.open(baseUrl + "?" + exportUrlToString)
+      },
       async checkStatus(id, status) {
         this.$baseConfirm(
           `你确定要${status == 1 ? '通过' : '不通过'}当前项吗`,
@@ -399,8 +438,7 @@
         this.fetchData()
       },
       async fetchData() {
-
-        const { date, status } = this.queryForm
+        const { date } = this.queryForm
         let start_time = ''
         let end_time = ''
         if (this.queryForm.date) {
@@ -413,7 +451,7 @@
           page: this.queryForm.page,
           limit: this.queryForm.limit,
           start_time,
-          end_time
+          end_time,
         }
         try {
           const result = await request({

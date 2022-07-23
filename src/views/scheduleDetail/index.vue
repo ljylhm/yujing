@@ -120,7 +120,12 @@
         label="老师"
         prop="teacher_name"
         align="center"
-      ></el-table-column>
+      >
+        <template #default="scope">
+          {{ scope.row.teacher_name }}
+          {{scope.row.teacher_description ? `(${scope.row.teacher_description})` : "" }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="实际课时"
         prop="real_time"

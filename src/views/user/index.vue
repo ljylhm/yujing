@@ -54,7 +54,12 @@
         prop="name"
         label="用户名"
         align="center"
-      ></el-table-column>
+      >
+         <template #default="scope">
+          {{ scope.row.name }}
+          {{scope.row.description ? `(${scope.row.description})` : "" }}
+        </template>
+      </el-table-column>
       <el-table-column
         
         prop="phone"

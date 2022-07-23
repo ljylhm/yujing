@@ -8,11 +8,10 @@
     <el-form ref="form" :model="form" :rules="rules" label-width="80px">
       <el-form-item label="选择学生" prop="name">
         <el-select
-          v-if="title == '添加'"
           v-model="form.student_id"
           filterable
           placeholder="请选择"
-          :disabled="title == '删除'"
+          :disabled="title == '编辑'"
         >
           <el-option
             v-for="item in studentList"
@@ -21,14 +20,12 @@
             :value="item.id"
           ></el-option>
         </el-select>
-        <div v-if="title == '删除'">{{form.student_name}}</div>
       </el-form-item>
       <el-form-item label="选择科目" prop="name">
         <el-select
-          v-if="title == '添加'"
           v-model="form.course_id"
           placeholder="请选择"
-          :disabled="title == '删除'"
+          :disabled="title == '编辑'"
         >
           <el-option
             v-for="item in subjectList"
@@ -37,9 +34,8 @@
             :value="item.id"
           ></el-option>
         </el-select>
-         <div v-if="title == '删除'">{{form.course_name}}</div>
       </el-form-item>
-      <el-form-item :label="title === '删除' ? '删除数量' : '课时数量'" prop="name">
+      <el-form-item label="课时数量" prop="name">
         <div style="width: 100px">
           <el-input v-model="form.num_class" min="1" step="0.5" type="number" />
         </div>
@@ -99,7 +95,7 @@
         if (!row) {
           this.title = '添加'
         } else {
-          this.title = '删除'
+          this.title = '编辑'
           this.form = Object.assign({}, row)
         }
         this.dialogFormVisible = true
@@ -142,17 +138,13 @@
       save() {
         this.$refs['form'].validate(async (valid) => {
           if (valid) {
-            const isEdit = this.title == '删除'
-            const apiName = isEdit ? 'class_delete' : 'class_add'
-            let form = {
-              ...this.form
-            }
-            if(isEdit) form.class_id = form.id
+            const isEdit = this.title == '编辑'
+            const apiName = isEdit ? 'update' : 'class_add'
             const result = await request({
               url: 'https://mastercenter.cn/api/student/' + apiName,
               method: 'post',
               data: {
-                ...form,
+                ...this.form,
               },
             })
             if (result && result.data) {

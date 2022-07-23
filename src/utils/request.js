@@ -57,6 +57,13 @@ instance.interceptors.request.use(
         'bearer ' + store.getters['user/accessToken']
     }
     //这里会过滤所有为空、0、false的key，如果不需要请自行注释
+    let wrapData = {}
+    if (config.data) {
+      for (let i in config.data) {
+        if (config.data[i] !== '' && config.data[i] !== undefined) wrapData[i] = config.data[i]
+      }
+    }
+    config.data = wrapData
     // if (config.data)
     //   config.data = Vue.prototype.$baseLodash.pickBy(
     //     config.data,

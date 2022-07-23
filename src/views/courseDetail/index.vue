@@ -2,9 +2,9 @@
   <div class="table-container">
     <vab-query-form>
       <vab-query-form-left-panel :span="4">
-        <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
+        <!-- <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
           添加
-        </el-button>
+        </el-button> -->
         <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
           删除
         </el-button> -->
@@ -14,7 +14,7 @@
         <el-button type="primary" @click="testNotify">baseNotify</el-button> -->
       </vab-query-form-left-panel>
       <vab-query-form-right-panel :span="20">
-        <el-form
+        <!-- <el-form
           ref="form"
           :model="queryForm"
           :inline="true"
@@ -26,7 +26,7 @@
           <el-form-item label="学生">
             <el-input v-model="queryForm.student_name" placeholder="请输入学生查询" />
           </el-form-item>
-          <!-- <el-form-item>
+          <el-form-item>
             <el-select v-model="queryForm.status" placeholder="请选择">
               <el-option
                 :label="'全部'"
@@ -39,7 +39,7 @@
                 :value="item.id">
               </el-option>
             </el-select>
-          </el-form-item> -->
+          </el-form-item>
           <el-form-item>
             <el-button
               icon="el-icon-search"
@@ -50,7 +50,7 @@
               查询
             </el-button>
           </el-form-item>
-        </el-form>
+        </el-form> -->
       </vab-query-form-right-panel>
     </vab-query-form>
 
@@ -76,13 +76,14 @@
         align="center"
       ></el-table-column>
       <el-table-column
+        
         label="学生"
         prop="student_name"
         align="center"
       ></el-table-column>
       <el-table-column
         
-        label="总课时"
+        label="课时"
         prop="num_class"
         width="200"
         align="center"
@@ -92,14 +93,12 @@
             <el-tag :type="tagList[row.status].type">{{tagList[row.status].name}}</el-tag>
         </template>
       </el-table-column> -->
-      <el-table-column  label="操作" width="180px" fixed="right">
+      <!-- <el-table-column  label="操作" width="180px" fixed="right">
         <template #default="{ row }">
-          <!-- <el-button type="text" @click="checkStatus(row.id, 1)" v-if="row.status == 0">通过</el-button>
-          <el-button type="text" @click="checkStatus(row.id, 2)" v-if="row.status == 0">不通过</el-button> -->
-          <el-button type="text" @click="toDetail(row.id)" >查看明细</el-button>
-          <el-button type="text" @click="handleEdit(row)" >删除</el-button>
+          <el-button type="text" @click="checkStatus(row.id, 1)" v-if="row.status == 0">通过</el-button>
+          <el-button type="text" @click="checkStatus(row.id, 2)" v-if="row.status == 0">不通过</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <el-pagination
       :background="background"
@@ -176,18 +175,13 @@
       },
     },
     async created() {
+      const id = this.$router.currentRoute.params.id
+      this.queryForm.class_id = id
       this.fetchData()
     },
     beforeDestroy() {},
     mounted() {},
     methods: {
-
-       toDetail(id) {
-        this.$router.push({
-          path: `/course_detail/${id}`,
-        })
-      },
-
       async checkStatus(id, status){
 
         this.$baseConfirm(`你确定要${status == 1 ? '通过' : '不通过'}当前项吗`, null, async () => {
@@ -266,8 +260,7 @@
         this.listLoading = true
         try {
           const result = await request({
-            // url: "https://mastercenter.cn/api/student/class_list",
-            url: "https://mastercenter.cn/api/student/class_total_list",
+            url: "https://mastercenter.cn/api/student/class_list",
             method: "post",
             data: {
               ...this.queryForm
