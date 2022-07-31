@@ -39,7 +39,7 @@ jobs:
         run: echo Hello, world!
 
       - name: resolved dependency tree
-        run: npm install
+        run: npm install –legacy-peer-deps
 
       - name: build package
         run: npm run build
