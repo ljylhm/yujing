@@ -88,6 +88,18 @@
         width="200"
         align="center"
       ></el-table-column>
+       <el-table-column
+        label="操作人"
+        prop="operate_name"
+        width="200"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        label="操作时间"
+        prop="created_at"
+        width="200"
+        align="center"
+      ></el-table-column>
       <!-- <el-table-column  label="状态" width="180px" align="center">
         <template #default="{ row }">
             <el-tag :type="tagList[row.status].type">{{tagList[row.status].name}}</el-tag>

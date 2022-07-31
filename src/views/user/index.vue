@@ -11,6 +11,13 @@
       </vab-query-form-left-panel>
       <vab-query-form-right-panel :span="20">
         <el-form :inline="true" :model="queryForm" @submit.native.prevent>
+          <el-form-item label="备注：">
+            <el-input
+              v-model.trim="queryForm.description"
+              placeholder="请输入备注"
+              clearable
+            />
+          </el-form-item>
           <el-form-item label="用户名：">
             <el-input
               v-model.trim="queryForm.name"
@@ -34,6 +41,7 @@
               查询
             </el-button>
           </el-form-item>
+          
         </el-form>
       </vab-query-form-right-panel>
     </vab-query-form>
@@ -127,6 +135,7 @@
           limit: 10,
           name: '',
           type: '',
+          description: ""
         },
         statusList: {
           1: '学生',

@@ -60,6 +60,14 @@
             >
               查询
             </el-button>
+            <el-button
+              icon="el-icon-arrow-left"
+              type="primary"
+              native-type="submit"
+              @click="backNextPage"
+            >
+              返回上一页
+            </el-button>
           </el-form-item>
         </el-form>
       </vab-query-form-right-panel>
@@ -409,6 +417,9 @@
       handleQuery() {
         this.queryForm.page = 1
         this.fetchData()
+      },
+      backNextPage(){
+        this.$router.back(-1)
       },
       async fetchData() {
         this.listLoading = true

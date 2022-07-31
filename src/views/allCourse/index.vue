@@ -2,17 +2,14 @@
   <div class="table-container">
     <vab-query-form>
       <vab-query-form-right-panel :span="24">
-        
         <el-form
           ref="form"
           :model="queryForm"
           :inline="true"
           @submit.native.prevent
-        > 
+        >
           <el-form-item label="">
-            <el-button type="primary" @click="exportDetail">
-              导出
-            </el-button>
+            <el-button type="primary" @click="exportDetail">导出</el-button>
           </el-form-item>
           <el-form-item label="学科">
             <el-input
@@ -117,14 +114,14 @@
         prop="student_name"
         align="center"
       ></el-table-column>
-      <el-table-column
-        label="老师"
-        prop="teacher_name"
-        align="center"
-      >
+      <el-table-column label="老师" prop="teacher_name" align="center">
         <template #default="scope">
           {{ scope.row.teacher_name }}
-          {{scope.row.teacher_description ? `(${scope.row.teacher_description})` : "" }}
+          {{
+            scope.row.teacher_description
+              ? `(${scope.row.teacher_description})`
+              : ''
+          }}
         </template>
       </el-table-column>
       <el-table-column
@@ -203,6 +200,9 @@
   import request from '@/utils/request'
   import { timeFormat } from '@/utils/date'
 
+  const today = new Date(new Date().setHours(0, 0, 0, 0))
+  const nextDay = new Date(today.getTime() + 1000 * 60 * 60 * 24)
+  
   export default {
     name: 'ComprehensiveTable',
     components: {
@@ -236,8 +236,9 @@
           course_name: '',
           student_name: '',
           teacher_name: '',
-          teacher_description: "",
+          teacher_description: '',
           status: '',
+          date: [today, nextDay],
         },
         tagList: {
           1: {
@@ -302,16 +303,16 @@
     beforeDestroy() {},
     mounted() {},
     methods: {
-      exportDetail(){
-          let baseUrl = "https://mastercenter.cn/api/detail_export"
-          let exportUrl = []
-          for(let i in this.queryForm){
-            if(this.queryForm[i] !== "" && this.queryForm[i] !== undefined){
-                exportUrl.push(`${i}=${this.queryForm[i]}`)
-            }
+      exportDetail() {
+        let baseUrl = 'https://mastercenter.cn/api/detail_export'
+        let exportUrl = []
+        for (let i in this.queryForm) {
+          if (this.queryForm[i] !== '' && this.queryForm[i] !== undefined) {
+            exportUrl.push(`${i}=${this.queryForm[i]}`)
           }
-          let exportUrlToString = exportUrl.join("&")
-          window.open(baseUrl + "?" + exportUrlToString)
+        }
+        let exportUrlToString = exportUrl.join('&')
+        window.open(baseUrl + '?' + exportUrlToString)
       },
       async checkStatus(id, status) {
         this.$baseConfirm(
