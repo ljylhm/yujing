@@ -25,6 +25,7 @@
         <el-form-item label="开始日期" prop="description">
           <div>
             <el-date-picker
+              @change="changeOne"
               v-model="form.start_time"
               type="datetime"
               placeholder="选择日期时间"
@@ -34,6 +35,8 @@
         <el-form-item label="结束日期" prop="description">
           <div>
             <el-date-picker
+              @change="changeTwo"
+              @blur="changeTwo"
               v-model="form.end_time"
               type="datetime"
               placeholder="选择日期时间"
@@ -219,6 +222,40 @@
     created() {},
     mounted() {},
     methods: {
+      changeOne(value) {
+        const { end_time } = this.form
+        if (end_time) {
+          let wrapEndTime =
+            typeof end_time === 'string' ? new Date(end_time) : end_time
+          if (value.getTime() > wrapEndTime.getTime()) {
+            this.$baseMessage('开始日期不能大于结束日期', 'warning')
+          } else {
+            const diff = Number(
+              (wrapEndTime.getTime() - value.getTime()) / (1000 * 60 * 60)
+            ).toFixed(1)
+            this.form.real_time = Number(diff)
+          }
+        }
+      },
+
+      changeTwo(value) {
+        const { start_time } = this.form
+        if (start_time) {
+          let wrapStartTime =
+            typeof start_time === 'string' ? new Date(start_time) : start_time
+            
+          if (value.getTime() < wrapStartTime.getTime()) {
+            this.$baseMessage('开始日期不能大于结束日期', 'warning')
+            return
+          } else {
+            const diff = Number(
+              (value.getTime() - wrapStartTime.getTime()) / (1000 * 60 * 60)
+            ).toFixed(1)
+            this.form.real_time = Number(diff)
+          }
+        }
+      },
+
       showEdit(row) {
         this.getStudentList()
         this.getTeacherList()
@@ -376,8 +413,9 @@
 
       save() {
         this.$refs['form'].validate(async (valid) => {
-          let { id, description, real_time, start_time, end_time, teacher_id } = this.form
-           if (!end_time || !start_time) {
+          let { id, description, real_time, start_time, end_time, teacher_id } =
+            this.form
+          if (!end_time || !start_time) {
             this.$baseMessage('请填写时间', 'warning')
             return
           }
@@ -388,7 +426,7 @@
           if (typeof end_time == 'object') end_time = end_time.getTime()
           else if (typeof end_time == 'string')
             end_time = new Date(end_time).getTime()
-          
+
           if (end_time < start_time) {
             this.$baseMessage('结束时间必须大于开始时间', 'warning')
             return

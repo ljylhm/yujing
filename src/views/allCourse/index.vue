@@ -202,6 +202,7 @@
 
   const today = new Date(new Date().setHours(0, 0, 0, 0))
   const nextDay = new Date(today.getTime() + 1000 * 60 * 60 * 24)
+  console.log('print')
 
   export default {
     name: 'ComprehensiveTable',
