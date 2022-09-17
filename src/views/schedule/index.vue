@@ -92,19 +92,24 @@
         prop="student_name"
         align="center"
       ></el-table-column>
-      <el-table-column
-        label="老师"
-        prop="teacher_name"
-        align="center"
-      >
+      <el-table-column label="老师" prop="teacher_name" align="center">
         <template #default="scope">
           {{ scope.row.teacher_name }}
-          {{scope.row.teacher_description ? `(${scope.row.teacher_description})` : "" }}
+          {{
+            scope.row.teacher_description
+              ? `(${scope.row.teacher_description})`
+              : ''
+          }}
         </template>
       </el-table-column>
       <el-table-column
         label="预估课时"
         prop="predict_time"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        label="真实课时"
+        prop="schedul_real_time"
         align="center"
       ></el-table-column>
       <!-- <el-table-column
@@ -153,6 +158,13 @@
             @click="checkStatus(row.id, 2)"
           >
             不通过
+          </el-button>
+          <el-button
+            type="text"
+            v-if="row.status == 0"
+            @click="delStatus(row.id)"
+          >
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -250,6 +262,21 @@
       },
     },
     async created() {
+      const wrapQuery = this.$router.currentRoute.query || ''
+      if (wrapQuery && wrapQuery.query) {
+        try {
+          this.queryForm = JSON.parse(wrapQuery.query)
+        } catch (error) {
+          this.queryForm = {
+            page: 1,
+            limit: 20,
+            course_name: '',
+            student_name: '',
+            teacher_name: '',
+            status: '',
+          }
+        }
+      }
       this.fetchData()
     },
     beforeDestroy() {},
@@ -282,9 +309,33 @@
           }
         )
       },
+      async delStatus(id) {
+        this.$baseConfirm(`你确定要删除当前项吗`, null, async () => {
+          this.listLoading = true
+          try {
+            const result = await request({
+              url: 'https://mastercenter.cn/api/schedul/arranging_delete',
+              method: 'post',
+              data: {
+                id,
+              },
+            })
+            this.listLoading = false
+            if (result && result.data) {
+              this.$baseMessage('删除成功', 'success')
+              this.fetchData()
+            }
+          } catch (error) {
+            this.$baseMessage(result.msg || '网络异常', 'error')
+            this.listLoading = false
+          }
+        })
+      },
       toDetail(id) {
         this.$router.push({
-          path: `/schedule_detail/${id}`,
+          path: `/schedule_detail/${id}?query=${encodeURIComponent(
+            JSON.stringify(this.queryForm)
+          )}`,
         })
       },
       tableSortChange() {

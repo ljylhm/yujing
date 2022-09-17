@@ -5,8 +5,12 @@
         <el-button icon="el-icon-plus" type="primary" @click="handleAdd">
           添加
         </el-button>
-        <el-link type="primary" :href="exportUrl"  style="margin-left:20px">导出</el-link>
-        <el-link type="primary" :href="exportUrlPlus" style="margin-left:20px">导出plus</el-link>
+        <el-link type="primary" :href="exportUrl" style="margin-left: 20px">
+          导出
+        </el-link>
+        <el-link type="primary" :href="exportUrlPlus" style="margin-left: 20px">
+          导出plus
+        </el-link>
         <!-- <el-button icon="el-icon-delete" type="danger" @click="handleDelete">
           删除
         </el-button> -->
@@ -68,6 +72,13 @@
             >
               返回上一页
             </el-button>
+            <el-button
+              type="primary"
+              native-type="submit"
+              @click="handleDelete"
+            >
+              批量删除
+            </el-button>
           </el-form-item>
         </el-form>
       </vab-query-form-right-panel>
@@ -83,6 +94,11 @@
       @selection-change="setSelectRows"
       @sort-change="tableSortChange"
     >
+      <el-table-column
+        type="selection"
+        width="55"
+        :selectable="checkboxT"
+      ></el-table-column>
       <el-table-column label="序号" width="95" align="center">
         <template #default="scope">
           {{ scope.$index + 1 }}
@@ -124,14 +140,14 @@
         prop="student_name"
         align="center"
       ></el-table-column>
-      <el-table-column
-        label="老师"
-        prop="teacher_name"
-        align="center"
-      >
+      <el-table-column label="老师" prop="teacher_name" align="center">
         <template #default="scope">
           {{ scope.row.teacher_name }}
-          {{scope.row.teacher_description ? `(${scope.row.teacher_description})` : "" }}
+          {{
+            scope.row.teacher_description
+              ? `(${scope.row.teacher_description})`
+              : ''
+          }}
         </template>
       </el-table-column>
       <el-table-column
@@ -168,7 +184,17 @@
           <el-button type="text" @click="handleHistory(row)">
             历史记录
           </el-button>
-          <el-button type="text" v-if="row.is_valid != 1 && Date.now() < Number(row.start_time ) * 1000 && row.status != 2" @click="deleteCourse(row) ">删除</el-button>
+          <el-button
+            type="text"
+            v-if="
+              row.is_valid != 1 &&
+              Date.now() < Number(row.start_time) * 1000 &&
+              row.status != 2
+            "
+            @click="deleteCourse(row)"
+          >
+            删除
+          </el-button>
           <!-- this.$refs['edit'].showEdit(row) -->
         </template>
       </el-table-column>
@@ -277,6 +303,8 @@
         },
         exportUrl: '',
         exportUrlPlus: '',
+        pastQuery: '',
+        didBatchDelete: false,
       }
     },
     computed: {
@@ -286,6 +314,10 @@
     },
     async created() {
       const id = this.$router.currentRoute.params.id
+      const query = this.$router.currentRoute.query
+      if (query && query.query) {
+        this.pastQuery = query.query
+      }
       this.queryForm.arranging_id = id
       this.exportUrl = `https://mastercenter.cn/api/export?arranging_id=${id}`
       this.exportUrlPlus = `https://mastercenter.cn/api/student_schedul_export?arranging_id=${id}`
@@ -294,6 +326,16 @@
     beforeDestroy() {},
     mounted() {},
     methods: {
+      checkboxT(row) {
+        if (row) {
+          return (
+            row.is_valid != 1 &&
+            Date.now() < Number(row.start_time) * 1000 &&
+            row.status != 2
+          )
+        }
+        return false
+      },
       async checkStatus(id, status) {
         this.$baseConfirm(
           `你确定要${status == 1 ? '通过' : '不通过'}当前项吗`,
@@ -386,24 +428,27 @@
         this.$refs['edit'].showEdit(row)
       },
       handleDelete(row) {
-        if (row.id) {
-          this.$baseConfirm('你确定要删除当前项吗', null, async () => {
-            const { msg } = await doDelete({ ids: row.id })
-            this.$baseMessage(msg, 'success')
+        if (this.selectRows.length > 0) {
+          const ids = this.selectRows.map((item) => item.id)
+          this.$baseConfirm('你确定要删除选中项吗', null, async () => {
+            console.log('ids', ids)
+            const result = await request({
+              url: 'https://mastercenter.cn/api/schedul/delete_course_batch',
+              method: 'post',
+              data: {
+                ids: ids,
+              },
+            })
+            if (result && result.code == '1001') {
+              this.$baseMessage('删除成功', 'success')
+            } else {
+              this.$baseMessage(result.msg || '删除失败', 'error')
+            }
             this.fetchData()
           })
         } else {
-          if (this.selectRows.length > 0) {
-            const ids = this.selectRows.map((item) => item.id).join()
-            this.$baseConfirm('你确定要删除选中项吗', null, async () => {
-              const { msg } = await doDelete({ ids: ids })
-              this.$baseMessage(msg, 'success')
-              this.fetchData()
-            })
-          } else {
-            this.$baseMessage('未选中任何行', 'error')
-            return false
-          }
+          this.$baseMessage('未选中任何行', 'error')
+          return false
         }
       },
       handleSizeChange(val) {
@@ -418,8 +463,14 @@
         this.queryForm.page = 1
         this.fetchData()
       },
-      backNextPage(){
-        this.$router.back(-1)
+      backNextPage() {
+        this.$router.push({
+          path: `/schedule?query=${this.pastQuery}`,
+        })
+        // this.$router.back(-1)
+      },
+      batchDelete() {
+        this.didBatchDelete = false
       },
       async fetchData() {
         this.listLoading = true

@@ -698,7 +698,19 @@
             ONE_HOUR_TIME
           ).toFixed(1)
         )
-        return diffClassTimes
+
+        // 判断是否大于0.5
+        let finialDiffClassTimes = diffClassTimes
+        const diffClassTimesArr = diffClassTimes.toString().split('.')
+        let prefixDiffClassTimes = Number(diffClassTimesArr[1])
+        if (prefixDiffClassTimes > 0 && prefixDiffClassTimes <= 5) {
+          diffClassTimesArr[1] = 5
+          finialDiffClassTimes = Number(diffClassTimesArr.join('.'))
+        } else if (prefixDiffClassTimes > 5) {
+          finialDiffClassTimes = Math.round(diffClassTimes)
+        }
+
+        return finialDiffClassTimes
       },
 
       handleClassNum() {
