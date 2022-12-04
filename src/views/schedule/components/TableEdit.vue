@@ -171,6 +171,11 @@
             </span>
           </div>
         </el-form-item>
+        <el-form-item label="万能时间" prop="is_time_check">
+          <div>
+            <el-checkbox v-model="form.is_time_check">是否勾选</el-checkbox>
+          </div>
+        </el-form-item>
 
         <el-form-item label="课程备注" prop="description">
           <div>
@@ -369,6 +374,7 @@
           week_type: [],
           schedul_time: [],
           class_num: 1,
+          is_time_check: false, // 0就是默认检测  1就是不检测
         },
         previewform: {
           start_date: '',
@@ -744,6 +750,7 @@
             method: 'post',
             data: {
               ...this.form,
+              is_time_check: !!this.form.is_time_check, // 处理is_time_check
               schedul_time,
             },
           })
